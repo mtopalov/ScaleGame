@@ -1,31 +1,40 @@
 package com.scalefocus.monstergame.board;
 
-
 import com.scalefocus.monstergame.contract.IPlayer;
 
+import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * @author mariyan.topalov
+ */
 public class Board {
 
-    private final Scanner in = new Scanner(System.in);
+    private static final Scanner in = new Scanner(System.in);
+
     private final int n;
+
     private final String[][] board;
 
-
     public Board() {
-        int number=0;
+        int number = 0;
 
         do {
             try {
                 System.out.print("Please select the size of the map(must be 8 or greater): ");
-                number = in.nextInt();
-            } catch (InputMismatchException ex) {
-                System.out.println("Invalid number!");
-            }finally {
-                in.nextLine();
-            }
+                String nextLine = in.nextLine();
+                if (nextLine == null || nextLine.equals("")) {
+                    continue;
+                }
 
+                if (nextLine.chars().allMatch(Character::isDigit)) {
+                    number = Integer.parseInt(nextLine);
+                }
+
+            } catch (InputMismatchException ex) {
+                System.out.println("Don't give me blank lines!");
+            }
         } while (number < 8);
 
         n = number;
@@ -35,10 +44,8 @@ public class Board {
 
     public void createBoard(IPlayer white, IPlayer black) {
 
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                board[i][j] = "   ";
-            }
+        for (String[] strings : board) {
+            Arrays.fill(strings, "   ");
         }
 
         int initPos = n / 2 - 2;
@@ -63,7 +70,6 @@ public class Board {
         white.getMonsterBy('@').setNewLocation(new Point(0, initPos + 4));
         white.getMonsterBy('@').setCurrentLocation(new Point(0, initPos + 4));
         white.getMonsterBy('@').setInitialLocation(new Point(0, initPos + 4));
-
 
         board[n - 1][initPos] = " " + black.getMonsterBy('$').getMonsterSymbol() + " ";
         black.getMonsterBy('$').setNewLocation(new Point(n - 1, initPos));
@@ -122,9 +128,9 @@ public class Board {
             else System.out.print("  " + x + "|");
 
             for (int y = 0; y < board[x].length; y++) {
-
                 System.out.print(board[x][y]);
             }
+
             if (x == 0)
                 System.out.println("|" + x + "   White " + white.getMonsterBy('$').getClass().getSimpleName() + " HP: " + white.getMonsterBy('$').getCurrentHealthPoints() + "   White " + white.getMonsterBy('^').getClass().getSimpleName() + " HP: " + white.getMonsterBy('^').getCurrentHealthPoints());
             else if (x == 1)
@@ -149,11 +155,13 @@ public class Board {
 
     }
 
-    public void removeIfDead(IPlayer player, char monster) {
-        if (player.getMonsterBy(monster).isRemoved()) return;
+    private void removeIfDead(IPlayer player, char monster) {
+        if (player.getMonsterBy(monster).isRemoved()) {
+            return;
+        }
 
         if (player.getMonsterBy(monster).isDead()) {
-            System.out.println(player.getClass().getSimpleName() + "'s " +player.getMonsterBy(monster).getClass().getSimpleName() + " is dead");
+            System.out.println(player.getClass().getSimpleName() + "'s " + player.getMonsterBy(monster).getClass().getSimpleName() + " is dead");
 
             Point point = new Point(player.getMonsterBy(monster).getNewLocation().getX(), player.getMonsterBy(monster).getNewLocation().getY());
 
@@ -164,19 +172,28 @@ public class Board {
         }
     }
 
-    public void printIfMoved(IPlayer player, char monster) {
-        if (player.getMonsterBy(monster).isDead()) return;
+    private void printIfMoved(IPlayer player, char monster) {
+        if (player.getMonsterBy(monster).isDead()) {
+            return;
+        }
         if (isLocationAvailable(player.getMonsterBy(monster).getNewLocation())) {
             board[player.getMonsterBy(monster).getNewLocation().getX()][player.getMonsterBy(monster).getNewLocation().getY()] = " " + player.getMonsterBy(monster).getMonsterSymbol() + " ";
-            board[player.getMonsterBy(monster).getCurrentLocation().getX()][player.getMonsterBy(monster).getCurrentLocation().getY()] = "   ";
-
+            if (player.getMonsterBy(monster).getCurrentLocation() != null) {
+                board[player.getMonsterBy(monster).getCurrentLocation().getX()][player.getMonsterBy(monster).getCurrentLocation().getY()] = "   ";
+            }
         }
     }
 
+    /**
+     * Checks if a location is available and it's not outside of the board.
+     *
+     * @param location location to be checked
+     * @return true if available, false if not
+     */
     public boolean isLocationAvailable(Point location) {
-        if (location.getX() >= 0 && location.getX() < n && location.getY() >= 0 && location.getY() < n)
-            if (board[location.getX()][location.getY()] == "   ")
-                return true;
+        if (location.getX() >= 0 && location.getX() < n && location.getY() >= 0 && location.getY() < n) {
+            return board[location.getX()][location.getY()].equals("   ");
+        }
         return false;
     }
 

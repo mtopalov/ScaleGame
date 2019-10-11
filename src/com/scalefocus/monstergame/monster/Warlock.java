@@ -21,7 +21,7 @@ public class Warlock extends Monster {
     }
 
     @Override
-    public boolean attack(IMonster attackedMonster) {
+    public boolean attack(Monster attackedMonster) {
         if (this.isDead()) return false;
 
         if (this.getNewLocation().calculateDistance(attackedMonster.getNewLocation()) <= this.getAttackRadius()) {

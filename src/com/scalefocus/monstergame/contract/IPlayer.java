@@ -1,6 +1,7 @@
 package com.scalefocus.monstergame.contract;
 
 import com.scalefocus.monstergame.board.Point;
+import com.scalefocus.monstergame.monster.Monster;
 
 public interface IPlayer {
 
@@ -8,7 +9,7 @@ public interface IPlayer {
 
     boolean attack(IPlayer player, char attacked, char attackingMonster);
 
-    IMonster getMonsterBy(char symbol);
+    Monster getMonsterBy(char symbol);
 
     boolean isTeamDead();
 

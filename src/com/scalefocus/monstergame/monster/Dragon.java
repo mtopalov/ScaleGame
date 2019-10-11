@@ -1,7 +1,6 @@
 package com.scalefocus.monstergame.monster;
 
 import com.scalefocus.monstergame.board.Point;
-import com.scalefocus.monstergame.contract.IMonster;
 
 public class Dragon extends Monster {
 
@@ -11,7 +10,9 @@ public class Dragon extends Monster {
 
     @Override
     public boolean move(Point positionToMove) {
-        if (this.isDead()) return false;
+        if (this.isDead()) {
+            return false;
+        }
 
         if (this.getNewLocation().calculateDistance(positionToMove) <= this.getMovesPerTurn()) {
             setCurrentLocation(getNewLocation());
@@ -23,8 +24,10 @@ public class Dragon extends Monster {
     }
 
     @Override
-    public boolean attack(IMonster attackedMonster) {
-        if (this.isDead()) return false;
+    public boolean attack(Monster attackedMonster) {
+        if (this.isDead()) {
+            return false;
+        }
 
         if (this.getNewLocation().calculateDistance(attackedMonster.getNewLocation()) <= this.getAttackRadius()) {
             attackedMonster.beDamageBy(this.getDamage());
@@ -37,6 +40,4 @@ public class Dragon extends Monster {
     public void beDamageBy(int damage) {
         setCurrentHealthPoints(getCurrentHealthPoints() - damage);
     }
-
-
 }

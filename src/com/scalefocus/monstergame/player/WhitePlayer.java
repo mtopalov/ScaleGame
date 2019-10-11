@@ -1,9 +1,10 @@
-package com.scalefocus.monstergame;
+package com.scalefocus.monstergame.player;
 
 import com.scalefocus.monstergame.board.Point;
 import com.scalefocus.monstergame.contract.IMonster;
 import com.scalefocus.monstergame.contract.IPlayer;
 import com.scalefocus.monstergame.contract.IWhitePlayer;
+import com.scalefocus.monstergame.monster.Monster;
 
 public class WhitePlayer extends Player implements IWhitePlayer {
 
@@ -22,9 +23,10 @@ public class WhitePlayer extends Player implements IWhitePlayer {
 
       if(getMonsterBy(monster).isDead()){
           getMonsterBy(monster).setNewLocation(getMonsterBy(monster).getInitialLocation());
-          getMonsterBy(monster).setCurrentLocation(new Point(0,0));
+          getMonsterBy(monster).setCurrentLocation(null);
           getMonsterBy(monster).setCurrentHealthPoints(getMonsterBy(monster).getInitialHealthPoints());
           getMonsterBy(monster).setRemoved(false);
+
           revivesLeft--;
           return true;
       }
@@ -33,17 +35,14 @@ public class WhitePlayer extends Player implements IWhitePlayer {
 
     @Override
     public boolean move(char monsterToMove, Point positionToMove) {
-
         IMonster myMonster = getMonsterBy(monsterToMove);
         return myMonster.move(positionToMove);
-
-
     }
 
     @Override
     public boolean attack(IPlayer attacked, char attackingMonster, char attackedChar) {
         IMonster myMonster = getMonsterBy(attackingMonster);
-        IMonster attackedMonster = attacked.getMonsterBy(attackedChar);
+        Monster attackedMonster = attacked.getMonsterBy(attackedChar);
         return myMonster.attack(attackedMonster);
     }
 }

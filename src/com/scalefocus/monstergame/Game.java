@@ -4,37 +4,43 @@ import com.scalefocus.monstergame.board.Board;
 import com.scalefocus.monstergame.board.Point;
 import com.scalefocus.monstergame.contract.IBlackPlayer;
 import com.scalefocus.monstergame.contract.IWhitePlayer;
+import com.scalefocus.monstergame.player.BlackPlayer;
+import com.scalefocus.monstergame.player.WhitePlayer;
 
 import java.util.Scanner;
 
-public class Game {
+/**
+ * @author mariyan.topalov
+ */
+class Game {
+
+    private static final Scanner in = new Scanner(System.in);
 
     private final IWhitePlayer whitePlayer;
+
     private final IBlackPlayer blackPlayer;
+
     private final Board board;
-    private final Scanner in = new Scanner(System.in);
 
     private int round;
 
-    boolean boosted;
+    private boolean boosted;
 
-    public Game() {
+    Game() {
         this.whitePlayer = new WhitePlayer();
         this.blackPlayer = new BlackPlayer();
         this.board = new Board();
         this.round = 1;
     }
 
-    public void start() {
+    void start() {
         board.createBoard(whitePlayer, blackPlayer);
     }
 
-    public void play() {
+    void play() {
         String commands;
         String[] commandsArray;
         String action;
-
-
 
         while (!whitePlayer.isTeamDead() && !blackPlayer.isTeamDead()) {
 
@@ -48,14 +54,39 @@ public class Game {
                 commandsArray = commands.split(" ");
                 action = commandsArray[0].toLowerCase();
 
-
                 switch (action) {
+                    default:
+                        board.printBoard(whitePlayer,blackPlayer);
+                        System.out.println("No such action!");
+                        break;
                     case "move": {
+                        if (commandsArray.length < 2
+                                || commandsArray[1].length() > 1
+                                || ((commandsArray[1].charAt(0) != '@')
+                                && (commandsArray[1].charAt(0) != '#')
+                                && (commandsArray[1].charAt(0) != '$')
+                                && (commandsArray[1].charAt(0) != '*')
+                                && (commandsArray[1].charAt(0) != '^'))
+                        ) {
+                            board.printBoard(whitePlayer, blackPlayer);
+                            System.out.println("Move failed! Try again!");
+                            break;
+                        }
+
                         char monsterToMove = commandsArray[1].charAt(0);
+
+                        if (commandsArray.length < 3 || commandsArray[2] == null || !Character.isDigit(commandsArray[2].charAt(0))
+                                || !Character.isDigit(commandsArray[2].charAt(commandsArray.length - 1))
+                                || !commandsArray[2].contains(",")) {
+                            board.printBoard(whitePlayer, blackPlayer);
+                            System.out.println("Move failed! Try again!");
+                            break;
+                        }
+
                         int y = Integer.parseInt(commandsArray[2].split(",")[0]);
                         int x = Integer.parseInt(commandsArray[2].split(",")[1]);
-                        Point locationToMove = new Point(x, y);
 
+                        Point locationToMove = new Point(x, y);
                         if (board.isLocationAvailable(locationToMove)) {
                             actionDone = whitePlayer.move(monsterToMove, locationToMove);
                         }
@@ -72,6 +103,23 @@ public class Game {
                     }
                     break;
                     case "attack": {
+                        if(commandsArray.length<3
+                                || commandsArray[1].length()>1
+                                || commandsArray[2].length()>1
+                                || ((commandsArray[1].charAt(0) != '@')
+                                && (commandsArray[1].charAt(0) != '#')
+                                && (commandsArray[1].charAt(0) != '$')
+                                && (commandsArray[1].charAt(0) != '*')
+                                && (commandsArray[1].charAt(0) != '^'))
+                                || ((commandsArray[2].charAt(0) != '@')
+                                && (commandsArray[2].charAt(0) != '#')
+                                && (commandsArray[2].charAt(0) != '$')
+                                && (commandsArray[2].charAt(0) != '*')
+                                && (commandsArray[2].charAt(0) != '^'))){
+                            board.printBoard(whitePlayer,blackPlayer);
+                            System.out.println("Attack failed! Try again!");
+                            break;
+                        }
                         char attackingMonster = commandsArray[1].charAt(0);
                         char attackedMonster = commandsArray[2].charAt(0);
 
@@ -105,9 +153,6 @@ public class Game {
             } else {
                 boolean actionDone = false;
 
-                System.out.println(blackPlayer.getMonsterBy('#').getDamage());
-
-
                 System.out.println("Black to move! Please insert action: ");
                 commands = in.nextLine();
                 commandsArray = commands.split(" ");
@@ -115,12 +160,38 @@ public class Game {
 
 
                 switch (action) {
+                    default:
+                        board.printBoard(whitePlayer,blackPlayer);
+                        System.out.println("No such action!");
+                        break;
                     case "move": {
+                        if (commandsArray.length < 2
+                                || commandsArray[1].length() > 1
+                                || ((commandsArray[1].charAt(0) != '@')
+                                && (commandsArray[1].charAt(0) != '#')
+                                && (commandsArray[1].charAt(0) != '$')
+                                && (commandsArray[1].charAt(0) != '*')
+                                && (commandsArray[1].charAt(0) != '^'))
+                        ) {
+                            board.printBoard(whitePlayer, blackPlayer);
+                            System.out.println("Move failed! Try again!");
+                            break;
+                        }
+
                         char monsterToMove = commandsArray[1].charAt(0);
+
+                        if (commandsArray.length < 3 || commandsArray[2] == null || !Character.isDigit(commandsArray[2].charAt(0))
+                                || !Character.isDigit(commandsArray[2].charAt(commandsArray.length - 1))
+                                || !commandsArray[2].contains(",")) {
+                            board.printBoard(whitePlayer, blackPlayer);
+                            System.out.println("Move failed! Try again!");
+                            break;
+                        }
+
                         int y = Integer.parseInt(commandsArray[2].split(",")[0]);
                         int x = Integer.parseInt(commandsArray[2].split(",")[1]);
-                        Point locationToMove = new Point(x, y);
 
+                        Point locationToMove = new Point(x, y);
                         if (board.isLocationAvailable(locationToMove)) {
                             actionDone = blackPlayer.move(monsterToMove, locationToMove);
 
@@ -130,6 +201,14 @@ public class Game {
                             System.out.println("Move succeed!");
                             blackPlayer.setOnTurn(false);
                             whitePlayer.setOnTurn(true);
+                            if (boosted) {
+                                blackPlayer.getMonsterBy('$').setDamage(blackPlayer.getMonsterBy('$').getDamage() / 2);
+                                blackPlayer.getMonsterBy('^').setDamage(blackPlayer.getMonsterBy('^').getDamage() / 2);
+                                blackPlayer.getMonsterBy('#').setDamage(blackPlayer.getMonsterBy('#').getDamage() / 2);
+                                blackPlayer.getMonsterBy('*').setDamage(blackPlayer.getMonsterBy('*').getDamage() / 2);
+                                blackPlayer.getMonsterBy('@').setDamage(blackPlayer.getMonsterBy('@').getDamage() / 2);
+                                boosted = false;
+                            }
                             round++;
 
                         } else {
@@ -140,6 +219,23 @@ public class Game {
                     }
                     break;
                     case "attack": {
+                        if(commandsArray.length<3
+                                || commandsArray[1].length()>1
+                                || commandsArray[2].length()>1
+                                || ((commandsArray[1].charAt(0) != '@')
+                                && (commandsArray[1].charAt(0) != '#')
+                                && (commandsArray[1].charAt(0) != '$')
+                                && (commandsArray[1].charAt(0) != '*')
+                                && (commandsArray[1].charAt(0) != '^'))
+                                || ((commandsArray[2].charAt(0) != '@')
+                                && (commandsArray[2].charAt(0) != '#')
+                                && (commandsArray[2].charAt(0) != '$')
+                                && (commandsArray[2].charAt(0) != '*')
+                                && (commandsArray[2].charAt(0) != '^'))){
+                            board.printBoard(whitePlayer,blackPlayer);
+                            System.out.println("Attack failed! Try again!");
+                            break;
+                        }
                         char attackingMonster = commandsArray[1].charAt(0);
                         char attackedMonster = commandsArray[2].charAt(0);
 
@@ -149,12 +245,15 @@ public class Game {
                             System.out.println("Attack succeed!");
                             whitePlayer.setOnTurn(true);
                             blackPlayer.setOnTurn(false);
-                            blackPlayer.getMonsterBy('$').setDamage(blackPlayer.getMonsterBy('$').getDamage() / 2);
-                            blackPlayer.getMonsterBy('^').setDamage(blackPlayer.getMonsterBy('^').getDamage() / 2);
-                            blackPlayer.getMonsterBy('#').setDamage(blackPlayer.getMonsterBy('#').getDamage() / 2);
-                            blackPlayer.getMonsterBy('*').setDamage(blackPlayer.getMonsterBy('*').getDamage() / 2);
-                            blackPlayer.getMonsterBy('@').setDamage(blackPlayer.getMonsterBy('@').getDamage() / 2);
-                            boosted = false;
+                            if (boosted) {
+                                blackPlayer.getMonsterBy('$').setDamage(blackPlayer.getMonsterBy('$').getDamage() / 2);
+                                blackPlayer.getMonsterBy('^').setDamage(blackPlayer.getMonsterBy('^').getDamage() / 2);
+                                blackPlayer.getMonsterBy('#').setDamage(blackPlayer.getMonsterBy('#').getDamage() / 2);
+                                blackPlayer.getMonsterBy('*').setDamage(blackPlayer.getMonsterBy('*').getDamage() / 2);
+                                blackPlayer.getMonsterBy('@').setDamage(blackPlayer.getMonsterBy('@').getDamage() / 2);
+                                boosted = false;
+                            }
+
                             round++;
 
                         } else {
@@ -163,20 +262,10 @@ public class Game {
                         board.printBoard(whitePlayer, blackPlayer);
                     }
                     break;
-                    case "skip": {
-                        actionDone = true;
-                        if (actionDone) {
-                            System.out.println("Skip succeed!");
-                            whitePlayer.setOnTurn(true);
-                            blackPlayer.setOnTurn(false);
-                            round++;
-
-                        }
-                    }
-                    break;
                     case "boost-attack": {
                         if (boosted) {
-                            System.out.println("Boost failed!"); break;
+                            System.out.println("Boost failed!");
+                            break;
                         } else {
                             System.out.println(blackPlayer.getMonsterBy('#').getDamage());
                             actionDone = blackPlayer.boostAttack();
