@@ -1,10 +1,10 @@
-package com.scalefocus.monstergame;
+package com.scalefocus.monstergame.player;
 
 import com.scalefocus.monstergame.contract.IBlackPlayer;
 import com.scalefocus.monstergame.contract.IMonster;
 import com.scalefocus.monstergame.contract.IPlayer;
 import com.scalefocus.monstergame.board.Point;
-
+import com.scalefocus.monstergame.monster.Monster;
 
 public class BlackPlayer extends Player implements IBlackPlayer {
 
@@ -30,7 +30,6 @@ public class BlackPlayer extends Player implements IBlackPlayer {
         return true;
     }
 
-
     @Override
     public boolean move(char monsterToMove, Point positionToMove) {
         IMonster myMonster = getMonsterBy(monsterToMove);
@@ -40,7 +39,7 @@ public class BlackPlayer extends Player implements IBlackPlayer {
     @Override
     public boolean attack(IPlayer attacked, char attackingMonster, char attackedChar) {
         IMonster myMonster = getMonsterBy(attackingMonster);
-        IMonster attackedMonster = attacked.getMonsterBy(attackedChar);
+        Monster attackedMonster = attacked.getMonsterBy(attackedChar);
         return myMonster.attack(attackedMonster);
     }
 }

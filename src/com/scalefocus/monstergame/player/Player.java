@@ -1,4 +1,4 @@
-package com.scalefocus.monstergame;
+package com.scalefocus.monstergame.player;
 
 import com.scalefocus.monstergame.board.Point;
 import com.scalefocus.monstergame.contract.IMonster;
@@ -11,11 +11,11 @@ public abstract class Player implements IPlayer {
 
     private boolean onTurn;
 
-    private final IMonster werewolf;
-    private final IMonster vampire;
-    private final IMonster dragon;
-    private final IMonster demon;
-    private final IMonster warlock;
+    private final Monster werewolf;
+    private final Monster vampire;
+    private final Monster dragon;
+    private final Monster demon;
+    private final Monster warlock;
 
     public Player(boolean onTurn) {
         this.werewolf = new Werewolf();
@@ -34,7 +34,7 @@ public abstract class Player implements IPlayer {
         this.onTurn = onTurn;
     }
 
-    public IMonster getMonsterBy(char symbol) throws NullPointerException {
+    public Monster getMonsterBy(char symbol) throws NullPointerException {
 
            switch (symbol) {
                case '$':
