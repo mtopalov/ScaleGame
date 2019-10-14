@@ -1,8 +1,10 @@
 package com.scalefocus.monstergame.monster;
 
 import com.scalefocus.monstergame.board.Point;
-import com.scalefocus.monstergame.contract.IMonster;
 
+/**
+ * @author mariyan.topalov
+ */
 public class Warlock extends Monster {
     public Warlock() {
         super(1, 2, 7, 10, '@');

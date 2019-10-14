@@ -1,5 +1,8 @@
 package com.scalefocus.monstergame.board;
 
+/**
+ * @author mariyan.topalov
+ */
 public class Point {
 
     private final int x;
@@ -20,7 +23,4 @@ public class Point {
     public int calculateDistance(Point b) {
         return (int) Math.hypot(Math.abs(b.getY() - this.getY()), Math.abs(b.getX() - this.getX()));
     }
-
-
-
 }

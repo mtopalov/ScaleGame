@@ -3,6 +3,9 @@ package com.scalefocus.monstergame.contract;
 import com.scalefocus.monstergame.board.Point;
 import com.scalefocus.monstergame.monster.Monster;
 
+/**
+ * @author mariyan.topalov
+ */
 public interface IPlayer {
 
     boolean move(char monsterToMove, Point positionToMove);

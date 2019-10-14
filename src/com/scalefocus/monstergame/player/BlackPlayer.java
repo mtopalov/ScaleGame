@@ -6,6 +6,9 @@ import com.scalefocus.monstergame.contract.IPlayer;
 import com.scalefocus.monstergame.board.Point;
 import com.scalefocus.monstergame.monster.Monster;
 
+/**
+ * @author mariyan.topalov
+ */
 public class BlackPlayer extends Player implements IBlackPlayer {
 
     private int boostLeft = 3;

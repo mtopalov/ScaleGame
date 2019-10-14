@@ -3,6 +3,9 @@ package com.scalefocus.monstergame.monster;
 import com.scalefocus.monstergame.board.Point;
 import com.scalefocus.monstergame.contract.IMonster;
 
+/**
+ * @author mariyan.topalov
+ */
 public abstract class Monster implements IMonster {
 
     private final int movesPerTurn;
