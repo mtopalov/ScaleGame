@@ -15,9 +15,7 @@ public class Point {
         return x;
     }
 
-    int getY() {
-        return y;
-    }
+    int getY() { return y; }
 
     public int calculateDistance(Point b) {
         return (int) Math.hypot(Math.abs(b.getY() - this.getY()), Math.abs(b.getX() - this.getX()));

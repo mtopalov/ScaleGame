@@ -3,7 +3,6 @@ package com.scalefocus.monstergame.board;
 import com.scalefocus.monstergame.contract.IPlayer;
 
 import java.util.Arrays;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -21,19 +20,14 @@ public class Board {
         int number = 0;
 
         do {
-            try {
-                System.out.print("Please select the size of the map(must be 8 or greater): ");
-                String nextLine = in.nextLine();
-                if (nextLine == null || nextLine.equals("")) {
-                    continue;
-                }
+            System.out.print("Please select the size of the map(must be 8 or greater): ");
+            String nextLine = in.nextLine();
+            if (nextLine == null || nextLine.equals("")) {
+                continue;
+            }
 
-                if (nextLine.chars().allMatch(Character::isDigit)) {
-                    number = Integer.parseInt(nextLine);
-                }
-
-            } catch (InputMismatchException ex) {
-                System.out.println("Don't give me blank lines!");
+            if (nextLine.chars().allMatch(Character::isDigit)) {
+                number = Integer.parseInt(nextLine);
             }
         } while (number < 8);
 
@@ -54,18 +48,22 @@ public class Board {
         white.getMonsterBy('$').setNewLocation(new Point(0, initPos));
         white.getMonsterBy('$').setCurrentLocation(new Point(0, initPos));
         white.getMonsterBy('$').setInitialLocation(new Point(0, initPos));
+
         board[0][initPos + 1] = " " + white.getMonsterBy('^').getMonsterSymbol() + " ";
         white.getMonsterBy('^').setNewLocation(new Point(0, initPos + 1));
         white.getMonsterBy('^').setCurrentLocation(new Point(0, initPos + 1));
         white.getMonsterBy('^').setInitialLocation(new Point(0, initPos + 1));
+
         board[0][initPos + 2] = " " + white.getMonsterBy('#').getMonsterSymbol() + " ";
         white.getMonsterBy('#').setNewLocation(new Point(0, initPos + 2));
         white.getMonsterBy('#').setCurrentLocation(new Point(0, initPos + 2));
         white.getMonsterBy('#').setInitialLocation(new Point(0, initPos + 2));
+
         board[0][initPos + 3] = " " + white.getMonsterBy('*').getMonsterSymbol() + " ";
         white.getMonsterBy('*').setNewLocation(new Point(0, initPos + 3));
         white.getMonsterBy('*').setCurrentLocation(new Point(0, initPos + 3));
         white.getMonsterBy('*').setInitialLocation(new Point(0, initPos + 3));
+
         board[0][initPos + 4] = " " + white.getMonsterBy('@').getMonsterSymbol() + " ";
         white.getMonsterBy('@').setNewLocation(new Point(0, initPos + 4));
         white.getMonsterBy('@').setCurrentLocation(new Point(0, initPos + 4));
@@ -74,15 +72,19 @@ public class Board {
         board[n - 1][initPos] = " " + black.getMonsterBy('$').getMonsterSymbol() + " ";
         black.getMonsterBy('$').setNewLocation(new Point(n - 1, initPos));
         black.getMonsterBy('$').setCurrentLocation(new Point(n - 1, initPos));
+
         board[n - 1][initPos + 1] = " " + black.getMonsterBy('^').getMonsterSymbol() + " ";
         black.getMonsterBy('^').setNewLocation(new Point(n - 1, initPos + 1));
         black.getMonsterBy('^').setCurrentLocation(new Point(n - 1, initPos + 1));
+
         board[n - 1][initPos + 2] = " " + black.getMonsterBy('#').getMonsterSymbol() + " ";
         black.getMonsterBy('#').setNewLocation(new Point(n - 1, initPos + 2));
         black.getMonsterBy('#').setCurrentLocation(new Point(n - 1, initPos + 2));
+
         board[n - 1][initPos + 3] = " " + black.getMonsterBy('*').getMonsterSymbol() + " ";
         black.getMonsterBy('*').setNewLocation(new Point(n - 1, initPos + 3));
         black.getMonsterBy('*').setCurrentLocation(new Point(n - 1, initPos + 3));
+
         board[n - 1][initPos + 4] = " " + black.getMonsterBy('@').getMonsterSymbol() + " ";
         black.getMonsterBy('@').setNewLocation(new Point(n - 1, initPos + 4));
         black.getMonsterBy('@').setCurrentLocation(new Point(n - 1, initPos + 4));
@@ -92,30 +94,7 @@ public class Board {
     }
 
     public void printBoard(IPlayer white, IPlayer black) {
-
-        removeIfDead(white, '$');
-        removeIfDead(white, '^');
-        removeIfDead(white, '#');
-        removeIfDead(white, '*');
-        removeIfDead(white, '@');
-
-        printIfMoved(white, '$');
-        printIfMoved(white, '^');
-        printIfMoved(white, '#');
-        printIfMoved(white, '*');
-        printIfMoved(white, '@');
-
-        removeIfDead(black, '$');
-        removeIfDead(black, '^');
-        removeIfDead(black, '#');
-        removeIfDead(black, '*');
-        removeIfDead(black, '@');
-
-        printIfMoved(black, '$');
-        printIfMoved(black, '^');
-        printIfMoved(black, '#');
-        printIfMoved(black, '*');
-        printIfMoved(black, '@');
+        refreshBoard(white, black);
 
         System.out.print("    ");
         for (int i = 0; i < n; i++)
@@ -163,16 +142,16 @@ public class Board {
         if (player.getMonsterBy(monster).isDead()) {
             System.out.println(player.getClass().getSimpleName() + "'s " + player.getMonsterBy(monster).getClass().getSimpleName() + " is dead");
 
-            Point point = new Point(player.getMonsterBy(monster).getNewLocation().getX(), player.getMonsterBy(monster).getNewLocation().getY());
+            Point deadMonsterLocation = new Point(player.getMonsterBy(monster).getNewLocation().getX(), player.getMonsterBy(monster).getNewLocation().getY());
 
-            board[point.getX()][point.getY()] = "   ";
+            board[deadMonsterLocation.getX()][deadMonsterLocation.getY()] = "   ";
 
             player.getMonsterBy(monster).setNewLocation(null);
             player.getMonsterBy(monster).setRemoved(true);
         }
     }
 
-    private void printIfMoved(IPlayer player, char monster) {
+    private void printIfAlive(IPlayer player, char monster) {
         if (player.getMonsterBy(monster).isDead()) {
             return;
         }
@@ -195,6 +174,35 @@ public class Board {
             return board[location.getX()][location.getY()].equals("   ");
         }
         return false;
+    }
+
+    private void refreshBoard(IPlayer white, IPlayer black) {
+
+        removeIfDead(white, '$');
+        removeIfDead(white, '^');
+        removeIfDead(white, '#');
+        removeIfDead(white, '*');
+        removeIfDead(white, '@');
+
+        printIfAlive(white, '$');
+        printIfAlive(white, '^');
+        printIfAlive(white, '#');
+        printIfAlive(white, '*');
+        printIfAlive(white, '@');
+
+        removeIfDead(black, '$');
+        removeIfDead(black, '^');
+        removeIfDead(black, '#');
+        removeIfDead(black, '*');
+        removeIfDead(black, '@');
+
+        printIfAlive(black, '$');
+        printIfAlive(black, '^');
+        printIfAlive(black, '#');
+        printIfAlive(black, '*');
+        printIfAlive(black, '@');
+
+
     }
 
 }

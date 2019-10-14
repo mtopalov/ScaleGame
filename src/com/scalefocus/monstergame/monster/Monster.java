@@ -50,8 +50,6 @@ public abstract class Monster implements IMonster {
         return monsterSymbol;
     }
 
-
-
     public Point getInitialLocation() {
         return initialLocation;
     }
@@ -108,4 +106,13 @@ public abstract class Monster implements IMonster {
         }
         return false;
     }
+
+    @Override
+    public abstract void beDamageBy(int damage);
+
+    @Override
+    public abstract boolean move(Point point) ;
+
+    @Override
+    public abstract boolean attack(Monster attackedMonster);
 }
