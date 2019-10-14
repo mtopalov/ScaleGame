@@ -6,6 +6,9 @@ import com.scalefocus.monstergame.contract.IPlayer;
 import com.scalefocus.monstergame.contract.IWhitePlayer;
 import com.scalefocus.monstergame.monster.Monster;
 
+/**
+ * @author mariyan.topalov
+ */
 public class WhitePlayer extends Player implements IWhitePlayer {
 
     private int revivesLeft = 1;

@@ -3,6 +3,9 @@ package com.scalefocus.monstergame.monster;
 import com.scalefocus.monstergame.board.Point;
 import com.scalefocus.monstergame.contract.IMonster;
 
+/**
+ * @author mariyan.topalov
+ */
 public abstract class Monster implements IMonster {
 
     private final int movesPerTurn;
@@ -49,8 +52,6 @@ public abstract class Monster implements IMonster {
     public char getMonsterSymbol() {
         return monsterSymbol;
     }
-
-
 
     public Point getInitialLocation() {
         return initialLocation;
@@ -108,4 +109,13 @@ public abstract class Monster implements IMonster {
         }
         return false;
     }
+
+    @Override
+    public abstract void beDamageBy(int damage);
+
+    @Override
+    public abstract boolean move(Point point) ;
+
+    @Override
+    public abstract boolean attack(Monster attackedMonster);
 }

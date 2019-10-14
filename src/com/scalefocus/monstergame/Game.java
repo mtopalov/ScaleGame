@@ -56,37 +56,22 @@ class Game {
 
                 switch (action) {
                     default:
-                        board.printBoard(whitePlayer,blackPlayer);
+                        board.printBoard(whitePlayer, blackPlayer);
                         System.out.println("No such action!");
                         break;
+
                     case "move": {
-                        if (commandsArray.length < 2
-                                || commandsArray[1].length() > 1
-                                || ((commandsArray[1].charAt(0) != '@')
-                                && (commandsArray[1].charAt(0) != '#')
-                                && (commandsArray[1].charAt(0) != '$')
-                                && (commandsArray[1].charAt(0) != '*')
-                                && (commandsArray[1].charAt(0) != '^'))
-                        ) {
+                        if (isMoveCommandInvalid(commandsArray)) {
                             board.printBoard(whitePlayer, blackPlayer);
                             System.out.println("Move failed! Try again!");
                             break;
                         }
 
                         char monsterToMove = commandsArray[1].charAt(0);
-
-                        if (commandsArray.length < 3 || commandsArray[2] == null || !Character.isDigit(commandsArray[2].charAt(0))
-                                || !Character.isDigit(commandsArray[2].charAt(commandsArray.length - 1))
-                                || !commandsArray[2].contains(",")) {
-                            board.printBoard(whitePlayer, blackPlayer);
-                            System.out.println("Move failed! Try again!");
-                            break;
-                        }
-
                         int y = Integer.parseInt(commandsArray[2].split(",")[0]);
                         int x = Integer.parseInt(commandsArray[2].split(",")[1]);
-
                         Point locationToMove = new Point(x, y);
+
                         if (board.isLocationAvailable(locationToMove)) {
                             actionDone = whitePlayer.move(monsterToMove, locationToMove);
                         }
@@ -103,23 +88,12 @@ class Game {
                     }
                     break;
                     case "attack": {
-                        if(commandsArray.length<3
-                                || commandsArray[1].length()>1
-                                || commandsArray[2].length()>1
-                                || ((commandsArray[1].charAt(0) != '@')
-                                && (commandsArray[1].charAt(0) != '#')
-                                && (commandsArray[1].charAt(0) != '$')
-                                && (commandsArray[1].charAt(0) != '*')
-                                && (commandsArray[1].charAt(0) != '^'))
-                                || ((commandsArray[2].charAt(0) != '@')
-                                && (commandsArray[2].charAt(0) != '#')
-                                && (commandsArray[2].charAt(0) != '$')
-                                && (commandsArray[2].charAt(0) != '*')
-                                && (commandsArray[2].charAt(0) != '^'))){
-                            board.printBoard(whitePlayer,blackPlayer);
+                        if (isAttackCommandInvalid(commandsArray)) {
+                            board.printBoard(whitePlayer, blackPlayer);
                             System.out.println("Attack failed! Try again!");
                             break;
                         }
+
                         char attackingMonster = commandsArray[1].charAt(0);
                         char attackedMonster = commandsArray[2].charAt(0);
 
@@ -161,33 +135,18 @@ class Game {
 
                 switch (action) {
                     default:
-                        board.printBoard(whitePlayer,blackPlayer);
+                        board.printBoard(whitePlayer, blackPlayer);
                         System.out.println("No such action!");
                         break;
                     case "move": {
-                        if (commandsArray.length < 2
-                                || commandsArray[1].length() > 1
-                                || ((commandsArray[1].charAt(0) != '@')
-                                && (commandsArray[1].charAt(0) != '#')
-                                && (commandsArray[1].charAt(0) != '$')
-                                && (commandsArray[1].charAt(0) != '*')
-                                && (commandsArray[1].charAt(0) != '^'))
-                        ) {
+
+                        if (isMoveCommandInvalid(commandsArray)) {
                             board.printBoard(whitePlayer, blackPlayer);
                             System.out.println("Move failed! Try again!");
                             break;
                         }
 
                         char monsterToMove = commandsArray[1].charAt(0);
-
-                        if (commandsArray.length < 3 || commandsArray[2] == null || !Character.isDigit(commandsArray[2].charAt(0))
-                                || !Character.isDigit(commandsArray[2].charAt(commandsArray.length - 1))
-                                || !commandsArray[2].contains(",")) {
-                            board.printBoard(whitePlayer, blackPlayer);
-                            System.out.println("Move failed! Try again!");
-                            break;
-                        }
-
                         int y = Integer.parseInt(commandsArray[2].split(",")[0]);
                         int x = Integer.parseInt(commandsArray[2].split(",")[1]);
 
@@ -219,23 +178,12 @@ class Game {
                     }
                     break;
                     case "attack": {
-                        if(commandsArray.length<3
-                                || commandsArray[1].length()>1
-                                || commandsArray[2].length()>1
-                                || ((commandsArray[1].charAt(0) != '@')
-                                && (commandsArray[1].charAt(0) != '#')
-                                && (commandsArray[1].charAt(0) != '$')
-                                && (commandsArray[1].charAt(0) != '*')
-                                && (commandsArray[1].charAt(0) != '^'))
-                                || ((commandsArray[2].charAt(0) != '@')
-                                && (commandsArray[2].charAt(0) != '#')
-                                && (commandsArray[2].charAt(0) != '$')
-                                && (commandsArray[2].charAt(0) != '*')
-                                && (commandsArray[2].charAt(0) != '^'))){
-                            board.printBoard(whitePlayer,blackPlayer);
+                        if (isAttackCommandInvalid(commandsArray)) {
+                            board.printBoard(whitePlayer, blackPlayer);
                             System.out.println("Attack failed! Try again!");
                             break;
                         }
+
                         char attackingMonster = commandsArray[1].charAt(0);
                         char attackedMonster = commandsArray[2].charAt(0);
 
@@ -255,13 +203,13 @@ class Game {
                             }
 
                             round++;
-
                         } else {
                             System.out.println("Attack failed! Try again!");
                         }
                         board.printBoard(whitePlayer, blackPlayer);
                     }
                     break;
+
                     case "boost-attack": {
                         if (boosted) {
                             System.out.println("Boost failed!");
@@ -281,22 +229,48 @@ class Game {
                         }
                     }
                     break;
-
                 }
-
             }
-
         }
         if (whitePlayer.isTeamDead()) {
             System.out.println("Black is victorious!");
-        } else {
+        }
+        if(blackPlayer.isTeamDead()){
             System.out.println("White is victorious!");
         }
 
 
     }
 
+    private boolean isMoveCommandInvalid(String[] commands) {
+        return commands.length != 3
+                || commands[2] == null
+                || !Character.isDigit(commands[2].charAt(0))
+                || !Character.isDigit(commands[2].charAt(commands.length - 1))
+                || !commands[2].contains(",")
+                || commands[1].length() > 1
+                || ((commands[1].charAt(0) != '@')
+                && (commands[1].charAt(0) != '#')
+                && (commands[1].charAt(0) != '$')
+                && (commands[1].charAt(0) != '*')
+                && (commands[1].charAt(0) != '^'));
+    }
 
+    private boolean isAttackCommandInvalid(String[] commands) {
+        return commands.length != 3
+                || commands[1].length() > 1
+                || commands[2].length() > 1
+                || ((commands[1].charAt(0) != '@')
+                && (commands[1].charAt(0) != '#')
+                && (commands[1].charAt(0) != '$')
+                && (commands[1].charAt(0) != '*')
+                && (commands[1].charAt(0) != '^'))
+                || ((commands[2].charAt(0) != '@')
+                && (commands[2].charAt(0) != '#')
+                && (commands[2].charAt(0) != '$')
+                && (commands[2].charAt(0) != '*')
+                && (commands[2].charAt(0) != '^'));
+    }
 }
 
 

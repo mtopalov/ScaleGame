@@ -1,12 +1,12 @@
 package com.scalefocus.monstergame.player;
 
 import com.scalefocus.monstergame.board.Point;
-import com.scalefocus.monstergame.contract.IMonster;
 import com.scalefocus.monstergame.contract.IPlayer;
 import com.scalefocus.monstergame.monster.*;
 
-
-
+/**
+ * @author mariyan.topalov
+ */
 public abstract class Player implements IPlayer {
 
     private boolean onTurn;
@@ -34,7 +34,7 @@ public abstract class Player implements IPlayer {
         this.onTurn = onTurn;
     }
 
-    public Monster getMonsterBy(char symbol) throws NullPointerException {
+    public Monster getMonsterBy(char symbol){
 
            switch (symbol) {
                case '$':
