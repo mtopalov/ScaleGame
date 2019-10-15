@@ -1,11 +1,9 @@
 package com.scalefocus.monstergame.contract;
 
-
 /**
  * @author mariyan.topalov
  */
-public interface IWhitePlayer extends IPlayer {
+public interface WhitePlayer {
 
     boolean revive(char monster);
-
 }

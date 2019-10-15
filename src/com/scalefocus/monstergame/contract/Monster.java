@@ -6,7 +6,6 @@ import com.scalefocus.monstergame.monster.Monster;
 /**
  * @author mariyan.topalov
  */
-
 public interface IMonster {
 
     void beDamageBy(int damage);

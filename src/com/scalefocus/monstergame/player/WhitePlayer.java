@@ -1,33 +1,32 @@
 package com.scalefocus.monstergame.player;
 
 import com.scalefocus.monstergame.board.Point;
-import com.scalefocus.monstergame.contract.IMonster;
-import com.scalefocus.monstergame.contract.IPlayer;
-import com.scalefocus.monstergame.contract.IWhitePlayer;
-import com.scalefocus.monstergame.monster.Monster;
+import com.scalefocus.monstergame.contract.Monster;
+import com.scalefocus.monstergame.contract.Player;
+import com.scalefocus.monstergame.monster.AbstractMonster;
 
 /**
  * @author mariyan.topalov
  */
-public class WhitePlayer extends Player implements IWhitePlayer {
+public class WhiteAbstractPlayer extends AbstractPlayer implements com.scalefocus.monstergame.contract.WhitePlayer {
 
     private int revivesLeft = 1;
 
-    public WhitePlayer() {
+    public WhiteAbstractPlayer() {
         super(true);
     }
 
     @Override
     public boolean revive(char monster) {
         if (revivesLeft == 0) {
-            System.out.println("You have no move revives left! ");
+            System.out.println("No move revives left! ");
             return false;
         }
 
       if(getMonsterBy(monster).isDead()){
           getMonsterBy(monster).setNewLocation(getMonsterBy(monster).getInitialLocation());
           getMonsterBy(monster).setCurrentLocation(null);
-          getMonsterBy(monster).setCurrentHealthPoints(getMonsterBy(monster).getInitialHealthPoints());
+          getMonsterBy(monster).setCurrentHealthPoints(getMonsterBy(monster).getHealthPoints());
           getMonsterBy(monster).setRemoved(false);
 
           revivesLeft--;
@@ -38,14 +37,21 @@ public class WhitePlayer extends Player implements IWhitePlayer {
 
     @Override
     public boolean move(char monsterToMove, Point positionToMove) {
-        IMonster myMonster = getMonsterBy(monsterToMove);
+        Monster myMonster = getMonsterBy(monsterToMove);
         return myMonster.move(positionToMove);
     }
 
     @Override
-    public boolean attack(IPlayer attacked, char attackingMonster, char attackedChar) {
-        IMonster myMonster = getMonsterBy(attackingMonster);
-        Monster attackedMonster = attacked.getMonsterBy(attackedChar);
-        return myMonster.attack(attackedMonster);
+    public boolean attack(Player attacked, char attackingMonster, char attackedChar) {
+        Monster myMonster = getMonsterBy(attackingMonster);
+        AbstractMonster attackedAbstractMonster = attacked.getMonsterBy(attackedChar);
+        return myMonster.attack(attackedAbstractMonster);
+    }
+
+    @Override
+    public void place(char monster, Point location) {
+        this.getMonsterBy(monster).setCurrentLocation(location);
+        this.getMonsterBy(monster).setNewLocation(location);
+        this.getMonsterBy(monster).setInitialLocation(location);
     }
 }

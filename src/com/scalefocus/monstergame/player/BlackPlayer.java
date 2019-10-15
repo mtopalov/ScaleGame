@@ -1,48 +1,63 @@
 package com.scalefocus.monstergame.player;
 
-import com.scalefocus.monstergame.contract.IBlackPlayer;
-import com.scalefocus.monstergame.contract.IMonster;
-import com.scalefocus.monstergame.contract.IPlayer;
+import com.scalefocus.monstergame.contract.Monster;
+import com.scalefocus.monstergame.contract.Player;
 import com.scalefocus.monstergame.board.Point;
-import com.scalefocus.monstergame.monster.Monster;
+import com.scalefocus.monstergame.monster.AbstractMonster;
 
 /**
  * @author mariyan.topalov
  */
-public class BlackPlayer extends Player implements IBlackPlayer {
+public class BlackAbstractPlayer extends AbstractPlayer implements com.scalefocus.monstergame.contract.BlackPlayer {
 
     private int boostLeft = 3;
 
-    public BlackPlayer() {
+    public BlackAbstractPlayer() {
         super(false);
     }
 
     @Override
-    public boolean boostAttack( ) {
+    public boolean boostAttack() {
         if (boostLeft == 0) {
+            System.out.println("No more boosts left!");
             return false;
         }
 
-        this.getMonsterBy('$').setDamage(this.getMonsterBy('$').getDamage()*2);
-        this.getMonsterBy('^').setDamage(this.getMonsterBy('^').getDamage()*2);
-        this.getMonsterBy('#').setDamage(this.getMonsterBy('#').getDamage()*2);
-        this.getMonsterBy('*').setDamage(this.getMonsterBy('*').getDamage()*2);
-        this.getMonsterBy('@').setDamage(this.getMonsterBy('@').getDamage()*2);
+        this.getMonsterBy('$').setDamage(this.getMonsterBy('$').getDamage() * 2);
+        this.getMonsterBy('^').setDamage(this.getMonsterBy('^').getDamage() * 2);
+        this.getMonsterBy('#').setDamage(this.getMonsterBy('#').getDamage() * 2);
+        this.getMonsterBy('*').setDamage(this.getMonsterBy('*').getDamage() * 2);
+        this.getMonsterBy('@').setDamage(this.getMonsterBy('@').getDamage() * 2);
 
         boostLeft--;
         return true;
     }
 
     @Override
+    public void removeBoost() {
+        this.getMonsterBy('$').setDamage(this.getMonsterBy('$').getDamage() / 2);
+        this.getMonsterBy('^').setDamage(this.getMonsterBy('^').getDamage() / 2);
+        this.getMonsterBy('#').setDamage(this.getMonsterBy('#').getDamage() / 2);
+        this.getMonsterBy('*').setDamage(this.getMonsterBy('*').getDamage() / 2);
+        this.getMonsterBy('@').setDamage(this.getMonsterBy('@').getDamage() / 2);
+    }
+
+    @Override
     public boolean move(char monsterToMove, Point positionToMove) {
-        IMonster myMonster = getMonsterBy(monsterToMove);
+        Monster myMonster = getMonsterBy(monsterToMove);
         return myMonster.move(positionToMove);
     }
 
     @Override
-    public boolean attack(IPlayer attacked, char attackingMonster, char attackedChar) {
-        IMonster myMonster = getMonsterBy(attackingMonster);
-        Monster attackedMonster = attacked.getMonsterBy(attackedChar);
-        return myMonster.attack(attackedMonster);
+    public boolean attack(Player attacked, char attackingMonster, char attackedChar) {
+        Monster myMonster = getMonsterBy(attackingMonster);
+        AbstractMonster attackedAbstractMonster = attacked.getMonsterBy(attackedChar);
+        return myMonster.attack(attackedAbstractMonster);
+    }
+
+    @Override
+    public void place(char monster, Point location) {
+        this.getMonsterBy(monster).setNewLocation(location);
+        this.getMonsterBy(monster).setCurrentLocation(location);
     }
 }
