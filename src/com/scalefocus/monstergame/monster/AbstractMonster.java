@@ -1,12 +1,12 @@
 package com.scalefocus.monstergame.monster;
 
 import com.scalefocus.monstergame.board.Point;
-import com.scalefocus.monstergame.contract.IMonster;
+import com.scalefocus.monstergame.contract.Monster;
 
 /**
  * @author mariyan.topalov
  */
-public abstract class Monster implements IMonster {
+public abstract class AbstractMonster implements Monster {
 
     private final int moveRange;
 
@@ -22,7 +22,7 @@ public abstract class Monster implements IMonster {
 
     private boolean removed;
 
-    public Monster(int moveRange, int attackRange, int damage, int healthPoints, char symbol, Point location) {
+    public AbstractMonster(int moveRange, int attackRange, int damage, int healthPoints, char symbol, Point location) {
         this.moveRange = moveRange;
         this.attackRange = attackRange;
         this.symbol = symbol;
@@ -33,6 +33,10 @@ public abstract class Monster implements IMonster {
 
     public char getSymbol() {
         return symbol;
+    }
+
+    public int getDamage() {
+        return damage;
     }
 
     public int getHealthPoints() {
@@ -67,18 +71,20 @@ public abstract class Monster implements IMonster {
     @Override
     public boolean move(Point point) {
         if (validate(point, moveRange)) {
-            return false;
+            setLocation(point);
+            return true;
         }
-        setLocation(point);
-        return true;
+
+        return false;
     }
 
     @Override
-    public boolean attack(Monster attackedMonster) {
-        if (validate(attackedMonster.getLocation(), attackRange)) {
+    public boolean attack(Monster monster) {
+        AbstractMonster abstractMonster = (AbstractMonster) monster;
+        if (validate(abstractMonster.getLocation(), attackRange)) {
             return false;
         }
-        attackedMonster.beDamageBy(damage);
+        monster.beDamageBy(damage);
         return true;
     }
 

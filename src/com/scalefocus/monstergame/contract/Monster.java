@@ -1,12 +1,12 @@
 package com.scalefocus.monstergame.contract;
 
 import com.scalefocus.monstergame.board.Point;
-import com.scalefocus.monstergame.monster.Monster;
+import com.scalefocus.monstergame.monster.AbstractMonster;
 
 /**
  * @author mariyan.topalov
  */
-public interface IMonster {
+public interface Monster {
 
     void beDamageBy(int damage);
 
@@ -14,6 +14,6 @@ public interface IMonster {
 
     boolean move(Point point);
 
-    boolean attack(Monster attackedMonster);
+    boolean attack(Monster monster);
 
 }

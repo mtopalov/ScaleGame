@@ -1,15 +1,16 @@
 package com.scalefocus.monstergame.contract;
 
+import com.scalefocus.monstergame.board.Board;
 import com.scalefocus.monstergame.board.Point;
 
 /**
  * @author mariyan.topalov
  */
-public interface IPlayer {
+public interface Player {
 
-    boolean attack(IPlayer player, char attacked, char attackingMonster);
+    boolean attack(Player player, char attackedMonster, char monster);
 
     boolean isDead();
 
-    void place(char monster, Point location);
+    boolean place(char monster, Point location, Board board);
 }

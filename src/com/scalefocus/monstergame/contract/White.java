@@ -3,7 +3,7 @@ package com.scalefocus.monstergame.contract;
 /**
  * @author mariyan.topalov
  */
-public interface WhitePlayer {
+public interface White {
 
     boolean revive(char monster);
 }

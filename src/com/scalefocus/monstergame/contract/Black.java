@@ -3,7 +3,7 @@ package com.scalefocus.monstergame.contract;
 /**
  * @author mariyan.topalov
  */
-public interface BlackPlayer {
+public interface Black {
 
-    boolean boostAttack();
+    boolean boostAttack(Player player, char attackedMonster, char monster);
 }
