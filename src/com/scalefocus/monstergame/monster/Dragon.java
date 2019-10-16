@@ -8,6 +8,6 @@ import com.scalefocus.monstergame.board.Point;
 public class Dragon extends AbstractMonster {
 
     public Dragon(Point location) {
-        super(3, 3, 8, 40, '#', location);
+        super(30, 30, 80, 40, '#', location);
     }
 }

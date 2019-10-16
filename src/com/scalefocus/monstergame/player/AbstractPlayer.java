@@ -2,7 +2,6 @@ package com.scalefocus.monstergame.player;
 
 import com.scalefocus.monstergame.board.Board;
 import com.scalefocus.monstergame.board.Point;
-import com.scalefocus.monstergame.contract.Monster;
 import com.scalefocus.monstergame.contract.Player;
 import com.scalefocus.monstergame.monster.*;
 
@@ -21,14 +20,18 @@ public abstract class AbstractPlayer implements Player {
 
     private final AbstractMonster warlock;
 
-    public AbstractPlayer(int boardSize, int startLine) {
+    AbstractPlayer(int startLine, int boardSize, Board board) {
         int start = (boardSize / 2) - 2;
-        this.werewolf = new Werewolf(new Point(start, startLine));
-        this.vampire = new Vampire(new Point(start + 1, startLine));
-        this.dragon = new Dragon(new Point(start + 2, startLine));
-        this.demon = new Demon(new Point(start + 3, startLine));
-        this.warlock = new Warlock(new Point(start + 4, startLine));
-
+        this.werewolf = new Werewolf(new Point(startLine, start));
+        this.vampire = new Vampire(new Point(startLine, start + 1));
+        this.dragon = new Dragon(new Point(startLine, start + 2));
+        this.demon = new Demon(new Point(startLine, start + 3));
+        this.warlock = new Warlock(new Point(startLine, start + 4));
+        initialPlace('$', getMonsterBy('$').getLocation(), board);
+        initialPlace('^', getMonsterBy('^').getLocation(), board);
+        initialPlace('#', getMonsterBy('#').getLocation(), board);
+        initialPlace('*', getMonsterBy('*').getLocation(), board);
+        initialPlace('@', getMonsterBy('@').getLocation(), board);
     }
 
     /**
@@ -63,13 +66,18 @@ public abstract class AbstractPlayer implements Player {
                 this.warlock.isDead();
     }
 
-
+    private void initialPlace(char monster, Point location, Board board) {
+        board.setMonster(monster, location);
+    }
 
     @Override
     public boolean place(char monster, Point location, Board board) {
-        Monster myMonster = getMonsterBy(monster);
+        AbstractMonster myMonster = getMonsterBy(monster);
+        Point oldLocation = myMonster.getLocation();
         boolean result = myMonster.move(location);
+
         if (result) {
+            board.clear(oldLocation);
             board.setMonster(monster, location);
             return true;
         }
@@ -77,10 +85,24 @@ public abstract class AbstractPlayer implements Player {
     }
 
     @Override
-    public boolean attack(Player player, char attackedMonster, char monster) {
+    public boolean attack(Player player, char monster, char attackedMonster, Board board) {
         AbstractMonster myMonster = getMonsterBy(monster);
         AbstractPlayer attackedPlayer = (AbstractPlayer) player;
-        AbstractMonster attackedAbstractMonster = attackedPlayer.getMonsterBy(monster);
-        return myMonster.attack(attackedAbstractMonster);
+        AbstractMonster attackedAbstractMonster = attackedPlayer.getMonsterBy(attackedMonster);
+        boolean result = myMonster.attack(attackedAbstractMonster);
+
+        if (result) {
+            board.clearDeadMonster(attackedAbstractMonster);
+            return true;
+        }
+        return false;
+    }
+
+    public void printInfo() {
+        System.out.print(this.getClass().getSimpleName() + "'s Werewolf HP: " + this.getMonsterBy('$').getHealthPoints() + "   ");
+        System.out.println(this.getClass().getSimpleName() + "'s Vampire HP: " + this.getMonsterBy('^').getHealthPoints());
+        System.out.print(this.getClass().getSimpleName() + "'s Dragon HP: " + this.getMonsterBy('#').getHealthPoints() + "   ");
+        System.out.println(this.getClass().getSimpleName() + "'s Demon HP: " + this.getMonsterBy('*').getHealthPoints());
+        System.out.println(this.getClass().getSimpleName() + "'s Warlock HP: " + this.getMonsterBy('@').getHealthPoints() + "\n");
     }
 }

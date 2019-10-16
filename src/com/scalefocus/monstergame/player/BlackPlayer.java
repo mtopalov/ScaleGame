@@ -1,5 +1,6 @@
 package com.scalefocus.monstergame.player;
 
+import com.scalefocus.monstergame.board.Board;
 import com.scalefocus.monstergame.contract.Black;
 import com.scalefocus.monstergame.contract.Player;
 import com.scalefocus.monstergame.monster.AbstractMonster;
@@ -13,8 +14,8 @@ public class BlackPlayer extends AbstractPlayer implements Black {
 
     private static final int BOOST_MULTIPLIER = 2;
 
-    public BlackPlayer(int boardSize, int startLine) {
-        super(boardSize, startLine);
+    public BlackPlayer(int boardSize, int startLine, Board board) {
+        super(boardSize, startLine, board);
     }
 
     @Override

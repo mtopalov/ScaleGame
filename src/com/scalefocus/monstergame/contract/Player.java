@@ -8,7 +8,7 @@ import com.scalefocus.monstergame.board.Point;
  */
 public interface Player {
 
-    boolean attack(Player player, char attackedMonster, char monster);
+    boolean attack(Player player, char attackedMonster, char monster, Board board);
 
     boolean isDead();
 

@@ -20,8 +20,6 @@ public abstract class AbstractMonster implements Monster {
 
     private Point location;
 
-    private boolean removed;
-
     public AbstractMonster(int moveRange, int attackRange, int damage, int healthPoints, char symbol, Point location) {
         this.moveRange = moveRange;
         this.attackRange = attackRange;
@@ -55,14 +53,6 @@ public abstract class AbstractMonster implements Monster {
         this.location = location;
     }
 
-    public boolean isRemoved() {
-        return removed;
-    }
-
-    public void setRemoved(boolean removed) {
-        this.removed = removed;
-    }
-
     @Override
     public boolean isDead() {
         return healthPoints <= 0;
@@ -74,7 +64,6 @@ public abstract class AbstractMonster implements Monster {
             setLocation(point);
             return true;
         }
-
         return false;
     }
 
@@ -82,10 +71,10 @@ public abstract class AbstractMonster implements Monster {
     public boolean attack(Monster monster) {
         AbstractMonster abstractMonster = (AbstractMonster) monster;
         if (validate(abstractMonster.getLocation(), attackRange)) {
-            return false;
+            monster.beDamageBy(damage);
+            return true;
         }
-        monster.beDamageBy(damage);
-        return true;
+        return false;
     }
 
     @Override
@@ -94,6 +83,6 @@ public abstract class AbstractMonster implements Monster {
     }
 
     private boolean validate(Point point, int range) {
-        return this.isDead() || this.getLocation().calculateDistance(point) > range;
+        return this.isDead() || this.getLocation().calculateDistance(point) <= range;
     }
 }

@@ -1,5 +1,9 @@
 package com.scalefocus.monstergame.board;
 
+import com.scalefocus.monstergame.contract.Monster;
+import com.scalefocus.monstergame.monster.AbstractMonster;
+import com.scalefocus.monstergame.player.WhitePlayer;
+
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -37,8 +41,6 @@ public class Board {
             Arrays.fill(strings, "   ");
         }
 
-        printBoard();
-
     }
 
     public int getSize() {
@@ -46,9 +48,6 @@ public class Board {
     }
 
     public void printBoard() {
-
-        //refreshBoard(white, black);
-
         System.out.print("    ");
         for (int i = 0; i < size; i++) {
             if (i >= 10) {
@@ -70,21 +69,21 @@ public class Board {
                 System.out.print(board[x][y]);
             }
 
-//            if (x == 0) {
-//                System.out.println("|" + x + "   White " + white.getMonsterBy('$').getClass().getSimpleName() + " HP: " + white.getMonsterBy('$').getHealthPoints() + "   White " + white.getMonsterBy('^').getClass().getSimpleName() + " HP: " + white.getMonsterBy('^').getHealthPoints());
-//            } else if (x == 1) {
-//                System.out.println("|" + x + "   White " + white.getMonsterBy('#').getClass().getSimpleName() + " HP: " + white.getMonsterBy('#').getHealthPoints() + "   White " + white.getMonsterBy('*').getClass().getSimpleName() + " HP: " + white.getMonsterBy('*').getHealthPoints());
-//            } else if (x == 2) {
-//                System.out.println("|" + x + "   White " + white.getMonsterBy('@').getClass().getSimpleName() + " HP: " + white.getMonsterBy('@').getHealthPoints());
-//            } else if (x == 5) {
-//                System.out.println("|" + x + "   Black " + black.getMonsterBy('$').getClass().getSimpleName() + " HP: " + black.getMonsterBy('$').getHealthPoints() + "   Black " + black.getMonsterBy('^').getClass().getSimpleName() + " HP: " + black.getMonsterBy('^').getHealthPoints());
-//            } else if (x == 6) {
-//                System.out.println("|" + x + "   Black " + black.getMonsterBy('#').getClass().getSimpleName() + " HP: " + black.getMonsterBy('#').getHealthPoints() + "   Black " + black.getMonsterBy('*').getClass().getSimpleName() + " HP: " + black.getMonsterBy('*').getHealthPoints());
-//            } else if (x == 7) {
-//                System.out.println("|" + x + "   Black " + black.getMonsterBy('@').getClass().getSimpleName() + " HP: " + black.getMonsterBy('@').getHealthPoints());
-//            } else {
-//                System.out.println("|" + x);
-//            }
+//                        if (x == 0) {
+//                            System.out.println("|" + x + "   White " + ((WhitePlayer)white).getMonsterBy('$').getClass().getSimpleName() + " HP: " + white.getMonsterBy('$').getHealthPoints() + "   White " + white.getMonsterBy('^').getClass().getSimpleName() + " HP: " + white.getMonsterBy('^').getHealthPoints());
+//                        } else if (x == 1) {
+//                            System.out.println("|" + x + "   White " + white.getMonsterBy('#').getClass().getSimpleName() + " HP: " + white.getMonsterBy('#').getHealthPoints() + "   White " + white.getMonsterBy('*').getClass().getSimpleName() + " HP: " + white.getMonsterBy('*').getHealthPoints());
+//                        } else if (x == 2) {
+//                            System.out.println("|" + x + "   White " + white.getMonsterBy('@').getClass().getSimpleName() + " HP: " + white.getMonsterBy('@').getHealthPoints());
+//                        } else if (x == 5) {
+//                            System.out.println("|" + x + "   Black " + black.getMonsterBy('$').getClass().getSimpleName() + " HP: " + black.getMonsterBy('$').getHealthPoints() + "   Black " + black.getMonsterBy('^').getClass().getSimpleName() + " HP: " + black.getMonsterBy('^').getHealthPoints());
+//                        } else if (x == 6) {
+//                            System.out.println("|" + x + "   Black " + black.getMonsterBy('#').getClass().getSimpleName() + " HP: " + black.getMonsterBy('#').getHealthPoints() + "   Black " + black.getMonsterBy('*').getClass().getSimpleName() + " HP: " + black.getMonsterBy('*').getHealthPoints());
+//                        } else if (x == 7) {
+//                            System.out.println("|" + x + "   Black " + black.getMonsterBy('@').getClass().getSimpleName() + " HP: " + black.getMonsterBy('@').getHealthPoints());
+//                        } else {
+//                            System.out.println("|" + x);
+//                        }
             System.out.println("|" + x);
         }
 
@@ -101,62 +100,27 @@ public class Board {
     }
 
     public void setMonster(char monster, Point location) {
-
         board[location.getX()][location.getY()] = " " + monster + " ";
-
     }
 
 
-    // private void printIfAlive(Player player, char monster) {
-    //        if (player.getMonsterBy(monster).isDead()) {
-    //            return;
-    //        }
-    //        if (isLocationAvailable(player.getMonsterBy(monster).getNewLocation())) {
-    //            board[player.getMonsterBy(monster).getNewLocation().getX()][player.getMonsterBy(monster).getNewLocation().getY()] = " " + player.getMonsterBy(monster).getMonsterSymbol() + " ";
-    //            if (player.getMonsterBy(monster).getCurrentLocation() != null) {
-    //                board[player.getMonsterBy(monster).getCurrentLocation().getX()][player.getMonsterBy(monster).getCurrentLocation().getY()] = "   ";
-    //            }
-    //        }
-    //}
 
-    // public boolean isLocationAvailable(Point location) {
-    //        if (location.getX() >= 0 && location.getX() < n && location.getY() >= 0 && location.getY() < n) {
-    //            return board[location.getX()][location.getY()].equals("   ");
-    //        }
-    //        return false;
-    //    }
+    public void clear(Point location) {
+        board[location.getX()][location.getY()] = "   ";
+    }
 
-    //private void refreshBoard(Player white, Player black) {
+    public void clearDeadMonster(Monster monster){
+        AbstractMonster abstractMonster = (AbstractMonster) monster;
+        if(abstractMonster.isDead()){
+            System.out.println(monster.getClass().getSimpleName() + " is dead!");
+            board[abstractMonster.getLocation().getX()][abstractMonster.getLocation().getY()]= "   ";
+        }
+    }
 
-    //        removeIfDead(white, '$');
-    //        removeIfDead(white, '^');
-    //        removeIfDead(white, '#');
-    //        removeIfDead(white, '*');
-    //        removeIfDead(white, '@');
-    //
-    //        printIfAlive(white, '$');
-    //        printIfAlive(white, '^');
-    //        printIfAlive(white, '#');
-    //        printIfAlive(white, '*');
-    //        printIfAlive(white, '@');
-    //
-    //        removeIfDead(black, '$');
-    //        removeIfDead(black, '^');
-    //        removeIfDead(black, '#');
-    //        removeIfDead(black, '*');
-    //        removeIfDead(black, '@');
-    //
-    //        printIfAlive(black, '$');
-    //        printIfAlive(black, '^');
-    //        printIfAlive(black, '#');
-    //        printIfAlive(black, '*');
-    //        printIfAlive(black, '@');
-
-
-    // }
-
-
-
-
-
+    public boolean isLocationAvailable(Point location) {
+        if (location.getX() >= 0 && location.getX() < this.getSize() && location.getY() >= 0 && location.getY() < this.getSize()) {
+            return this.board[location.getX()][location.getY()].equals("   ");
+        }
+        return false;
+    }
 }
