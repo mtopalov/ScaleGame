@@ -1,7 +1,6 @@
 package com.scalefocus.monstergame.contract;
 
 import com.scalefocus.monstergame.board.Board;
-
 /**
  * @author mariyan.topalov
  */

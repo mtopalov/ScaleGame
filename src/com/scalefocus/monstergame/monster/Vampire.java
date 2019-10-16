@@ -1,7 +1,6 @@
 package com.scalefocus.monstergame.monster;
 
 import com.scalefocus.monstergame.board.Point;
-
 /**
  * @author mariyan.topalov
  */

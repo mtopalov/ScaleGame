@@ -3,7 +3,6 @@ package com.scalefocus.monstergame;
 import com.scalefocus.monstergame.board.Board;
 import com.scalefocus.monstergame.board.Point;
 import com.scalefocus.monstergame.contract.Player;
-import com.scalefocus.monstergame.contract.White;
 import com.scalefocus.monstergame.player.AbstractPlayer;
 import com.scalefocus.monstergame.player.BlackPlayer;
 import com.scalefocus.monstergame.player.WhitePlayer;
@@ -27,6 +26,8 @@ class Game {
 
     private int round;
 
+    private boolean whiteOnTurn = true;
+
 
     Game() {
         this.board = new Board();
@@ -34,70 +35,47 @@ class Game {
         this.black = new BlackPlayer(board.getSize() - 1, board.getSize(), board);
         this.inputValidation = new UserInputValidation();
         this.round = 1;
-        white.printInfo();
-        black.printInfo();
-        board.printBoard();
+        outputCurrentState();
     }
 
     void play() {
+
         while (!white.isDead() && !black.isDead()) {
 
-            if (((WhitePlayer) white).isTurn()) {
+            if (whiteOnTurn) {
                 whiteToMove();
             } else {
                 blackToMove();
             }
+
+            if (white.isDead()) {
+                System.out.println("Black is victorious!");
+            } else if (black.isDead()) {
+                System.out.println("White is victorious!");
+            }
+
         }
     }
 
-
     private void whiteToMove() {
-        String commands;
-        String[] commandsArray;
-        String action;
-        boolean actionDone = false;
-
         System.out.println("Round: " + round);
         System.out.println("White to move! Please insert action: ");
 
-        commands = input.nextLine();
-        commandsArray = commands.split(" ");
-        action = commandsArray[0].toLowerCase();
+        String commands = input.nextLine();
+        String[] commandsArray = commands.split(" ");
+        if (commandsArray.length != 3) {
+            board.printBoard();
+            System.out.println("No such action!");
+        }
+
+        String action = commandsArray[0].toLowerCase();
+        String firstParameter = commandsArray[1];
+        String secondParameter = commandsArray[2];
 
         switch (action) {
-            default:
-                board.printBoard();
-                System.out.println("No such action!");
+            case "move":
+                move(white, firstParameter, secondParameter);
                 break;
-
-            case "move": {
-                if (inputValidation.isMoveCommandInvalid(commandsArray)) {
-                    board.printBoard();
-                    System.out.println("Move failed! Try again!");
-                    break;
-                }
-
-                char monsterToMove = commandsArray[1].charAt(0);
-                int y = Integer.parseInt(commandsArray[2].split(",")[0]);
-                int x = Integer.parseInt(commandsArray[2].split(",")[1]);
-                Point locationToMove = new Point(x, y);
-
-                if (board.isLocationAvailable(locationToMove)) {
-                    actionDone = white.place(monsterToMove, locationToMove, board);
-                }
-
-                if (actionDone) {
-                    System.out.println("Move succeed!");
-                    ((WhitePlayer) white).setTurn(false);
-
-                } else {
-                    System.out.println("Move failed! Try again!");
-                }
-                white.printInfo();
-                black.printInfo();
-                board.printBoard();
-            }
-            break;
             case "attack": {
                 if (inputValidation.isAttackCommandInvalid(commandsArray)) {
                     board.printBoard();
@@ -108,17 +86,15 @@ class Game {
                 char attackingMonster = commandsArray[1].charAt(0);
                 char attackedMonster = commandsArray[2].charAt(0);
 
-                actionDone = white.attack(black, attackingMonster, attackedMonster, board);
+                boolean attackDone = white.attack(black, attackingMonster, attackedMonster, board);
 
-                if (actionDone) {
+                if (attackDone) {
                     System.out.println("Attack succeed!");
-                    ((WhitePlayer) white).setTurn(false);
+                    whiteOnTurn = false;
                 } else {
                     System.out.println("Attack failed! Try again!");
                 }
-                white.printInfo();
-                black.printInfo();
-                board.printBoard();
+                outputCurrentState();
             }
             break;
             case "revive": {
@@ -129,32 +105,28 @@ class Game {
                 }
                 char monsterToRevive = commandsArray[1].charAt(0);
 
-                actionDone = ((WhitePlayer) white).revive(monsterToRevive, board);
+                boolean reviveDone = ((WhitePlayer) white).revive(monsterToRevive, board);
 
-                if (actionDone) {
+                if (reviveDone) {
                     System.out.println("Revive succeed!");
                 } else {
                     System.out.println("Revive failed! Try again!");
                 }
-                white.printInfo();
-                black.printInfo();
-                board.printBoard();
+                outputCurrentState();
             }
             break;
+            default: {
+                board.printBoard();
+                System.out.println("No such action!");
+            }
         }
     }
 
     private void blackToMove() {
-        String commands;
-        String[] commandsArray;
-        String action;
-
-
-        boolean actionDone = false;
         System.out.println("Black to move! Please insert action: ");
-        commands = input.nextLine();
-        commandsArray = commands.split(" ");
-        action = commandsArray[0].toLowerCase();
+        String commands = input.nextLine();
+        String[] commandsArray = commands.split(" ");
+        String action = commandsArray[0].toLowerCase();
 
         switch (action) {
             default:
@@ -162,33 +134,33 @@ class Game {
                 System.out.println("No such action!");
                 break;
             case "move": {
-
-                if (inputValidation.isMoveCommandInvalid(commandsArray)) {
+                //validate is the move is invalid
+                if (inputValidation.isMoveCommandInvalid(commandsArray[1], commandsArray[2])) {
                     board.printBoard();
                     System.out.println("Move failed! Try again!");
                     break;
                 }
 
+                //retrieve parameters(symbol and location) from the move command
                 char monsterToMove = commandsArray[1].charAt(0);
                 int y = Integer.parseInt(commandsArray[2].split(",")[0]);
                 int x = Integer.parseInt(commandsArray[2].split(",")[1]);
-
                 Point locationToMove = new Point(x, y);
-                if (board.isLocationAvailable(locationToMove)) {
-                    actionDone = black.place(monsterToMove, locationToMove, board);
 
-                }
+                //call the actual move
+                boolean moveResult = black.place(monsterToMove, locationToMove, board);
 
-                if (actionDone) {
+                //validate the result from the move operation
+                if (moveResult) {
                     System.out.println("Move succeed!");
-                    ((WhitePlayer) white).setTurn(true);
+                    whiteOnTurn = true;
                     round++;
                 } else {
                     System.out.println("Move failed! Try again!");
                 }
-                white.printInfo();
-                black.printInfo();
-                board.printBoard();
+
+                //print the current state on the board
+                outputCurrentState();
             }
             break;
             case "attack": {
@@ -198,44 +170,76 @@ class Game {
                     break;
                 }
 
-                char attackingMonster = commandsArray[1].charAt(0);
+                char myMonster = commandsArray[1].charAt(0);
                 char attackedMonster = commandsArray[2].charAt(0);
 
-                actionDone = black.attack(white, attackingMonster, attackedMonster, board);
+                boolean attackDone = black.attack(white, myMonster, attackedMonster, board);
 
-                if (actionDone) {
+                if (attackDone) {
                     System.out.println("Attack succeed!");
-                    ((WhitePlayer) white).setTurn(true);
+                    whiteOnTurn = true;
                     round++;
                 } else {
                     System.out.println("Attack failed! Try again!");
                 }
-                white.printInfo();
-                black.printInfo();
-                board.printBoard();
+                outputCurrentState();
             }
             break;
 
             case "boost-attack": {
-                char attackedMonster = commandsArray[1].charAt(0);
-                char myMonster = commandsArray[2].charAt(0);
+                if (inputValidation.isAttackCommandInvalid(commandsArray)) {
+                    board.printBoard();
+                    System.out.println("Attack failed! Try again!");
+                    break;
+                }
+                char myMonster = commandsArray[1].charAt(0);
+                char attackedMonster = commandsArray[2].charAt(0);
 
-                actionDone = ((BlackPlayer) black).boostAttack(white, attackedMonster, myMonster);
+                boolean boostAttackDone = ((BlackPlayer) black).boostAttack(white, myMonster, attackedMonster, board);
 
-                if (actionDone) {
+                if (boostAttackDone) {
                     System.out.println("Boost-attack succeed!");
-                    ((WhitePlayer) white).setTurn(true);
+                    whiteOnTurn = true;
                 } else {
                     System.out.println("Boost-attack failed! Try again!");
                 }
 
-                white.printInfo();
-                black.printInfo();
-                board.printBoard();
+                outputCurrentState();
             }
             break;
         }
+    }
 
+    private void outputCurrentState() {
+        white.printInfo();
+        black.printInfo();
+        board.printBoard();
+    }
+
+    private void move(Player player, String firstParameter, String secondParameter) {
+
+        if (inputValidation.isMoveCommandInvalid(firstParameter, secondParameter)) {
+            board.printBoard();
+            System.out.println("Move failed! Try again!");
+            return;
+        }
+
+        char monsterToMove = firstParameter.charAt(0);
+        String[] locations = secondParameter.split(",");
+        int y = Integer.parseInt(locations[0]);
+        int x = Integer.parseInt(locations[1]);
+        Point locationToMove = new Point(x, y);
+
+        boolean moveDone = player.place(monsterToMove, locationToMove, board);
+
+        if (moveDone) {
+            System.out.println("Move succeed!");
+            whiteOnTurn = !(player instanceof WhitePlayer);
+
+        } else {
+            System.out.println("Move failed! Try again!");
+        }
+        outputCurrentState();
     }
 }
 

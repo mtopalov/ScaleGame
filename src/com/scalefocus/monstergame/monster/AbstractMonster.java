@@ -12,15 +12,15 @@ public abstract class AbstractMonster implements Monster {
 
     private final int attackRange;
 
-    private final char symbol;
-
     private final int damage;
+
+    private final char symbol;
 
     private int healthPoints;
 
     private Point location;
 
-    public AbstractMonster(int moveRange, int attackRange, int damage, int healthPoints, char symbol, Point location) {
+    protected AbstractMonster(int moveRange, int attackRange, int damage, int healthPoints, char symbol, Point location) {
         this.moveRange = moveRange;
         this.attackRange = attackRange;
         this.symbol = symbol;
@@ -29,12 +29,12 @@ public abstract class AbstractMonster implements Monster {
         this.location = location;
     }
 
-    public char getSymbol() {
-        return symbol;
-    }
-
     public int getDamage() {
         return damage;
+    }
+
+    public char getSymbol() {
+        return symbol;
     }
 
     public int getHealthPoints() {
@@ -49,7 +49,7 @@ public abstract class AbstractMonster implements Monster {
         return location;
     }
 
-    public void setLocation(Point location) {
+    private void setLocation(Point location) {
         this.location = location;
     }
 
@@ -58,6 +58,12 @@ public abstract class AbstractMonster implements Monster {
         return healthPoints <= 0;
     }
 
+    /**
+     * {@inheritDoc}
+     * This implementation validates is the move possible
+     * @param point {@link Point}
+     * @return {@link Boolean} - is the move successful (0 : no, 1 : yes)
+     */
     @Override
     public boolean move(Point point) {
         if (validate(point, moveRange)) {

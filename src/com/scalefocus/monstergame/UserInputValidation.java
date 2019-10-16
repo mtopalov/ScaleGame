@@ -5,20 +5,19 @@ package com.scalefocus.monstergame;
  **/
 class UserInputValidation {
 
-    boolean isMoveCommandInvalid(String[] commands) {
-        return commands.length != 3
-                || ((commands[1].charAt(0) != '@')
-                && (commands[1].charAt(0) != '#')
-                && (commands[1].charAt(0) != '$')
-                && (commands[1].charAt(0) != '*')
-                && (commands[1].charAt(0) != '^'))
-                || commands[1].length() > 1
-                || commands[2] == null
-                || commands[2].split(",").length < 2
-                || !commands[2].split(",")[0].chars().allMatch(Character::isDigit)
-                || !commands[2].split(",")[1].chars().allMatch(Character::isDigit)
-                || !commands[2].contains(",");
-
+    boolean isMoveCommandInvalid(String firstParameter, String secondParameter) {
+        if (secondParameter == null) return false;
+        String[] secondParameterSplit = secondParameter.split(",");
+        return ((firstParameter.charAt(0) != '@')
+                && (firstParameter.charAt(0) != '#')
+                && (firstParameter.charAt(0) != '$')
+                && (firstParameter.charAt(0) != '*')
+                && (firstParameter.charAt(0) != '^'))
+                || firstParameter.length() > 1
+                || secondParameterSplit.length < 2
+                || !secondParameterSplit[0].chars().allMatch(Character::isDigit)
+                || !secondParameterSplit[1].chars().allMatch(Character::isDigit)
+                || !secondParameter.contains(",");
     }
 
     boolean isAttackCommandInvalid(String[] commands) {
@@ -44,9 +43,5 @@ class UserInputValidation {
                 && (commands[1].charAt(0) != '$')
                 && (commands[1].charAt(0) != '*')
                 && (commands[1].charAt(0) != '^'));
-    }
-
-    boolean isBoostCommandInvalid(String[] commands) {
-        return commands.length != 1;
     }
 }

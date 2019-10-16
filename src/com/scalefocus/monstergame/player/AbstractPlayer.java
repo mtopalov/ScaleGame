@@ -10,17 +10,17 @@ import com.scalefocus.monstergame.monster.*;
  */
 public abstract class AbstractPlayer implements Player {
 
-    private final AbstractMonster werewolf;
+    protected AbstractMonster werewolf;
 
-    private final AbstractMonster vampire;
+    protected AbstractMonster vampire;
 
-    private final AbstractMonster dragon;
+    protected AbstractMonster dragon;
 
-    private final AbstractMonster demon;
+    protected AbstractMonster demon;
 
-    private final AbstractMonster warlock;
+    protected AbstractMonster warlock;
 
-    AbstractPlayer(int startLine, int boardSize, Board board) {
+    protected AbstractPlayer(int startLine, int boardSize, Board board) {
         int start = (boardSize / 2) - 2;
         this.werewolf = new Werewolf(new Point(startLine, start));
         this.vampire = new Vampire(new Point(startLine, start + 1));
@@ -38,7 +38,7 @@ public abstract class AbstractPlayer implements Player {
      * This method provides to White and Black player's monster by its symbol.
      *
      * @param symbol
-     * @return object of type AbstractMonster
+     * @return object that matches the gives symbol
      */
     protected AbstractMonster getMonsterBy(char symbol) {
         switch (symbol) {
@@ -57,6 +57,11 @@ public abstract class AbstractPlayer implements Player {
         }
     }
 
+    /**
+     * This method checks if all Player's monsters are dead.
+     *
+     * @return true if all monsters are dead, otherwise returns false.
+     */
     @Override
     public boolean isDead() {
         return this.werewolf.isDead() &&
@@ -66,20 +71,25 @@ public abstract class AbstractPlayer implements Player {
                 this.warlock.isDead();
     }
 
-    private void initialPlace(char monster, Point location, Board board) {
-        board.setMonster(monster, location);
-    }
-
+    /**
+     * This method moves a Monster
+     *
+     * @param monster
+     * @param location
+     * @param board
+     */
     @Override
     public boolean place(char monster, Point location, Board board) {
         AbstractMonster myMonster = getMonsterBy(monster);
         Point oldLocation = myMonster.getLocation();
-        boolean result = myMonster.move(location);
 
-        if (result) {
-            board.clear(oldLocation);
-            board.setMonster(monster, location);
-            return true;
+        if (board.isLocationAvailable(location)) {
+            boolean result = myMonster.move(location);
+            if (result) {
+                board.clear(oldLocation);
+                board.setMonster(monster, location);
+                return true;
+            }
         }
         return false;
     }
@@ -92,17 +102,33 @@ public abstract class AbstractPlayer implements Player {
         boolean result = myMonster.attack(attackedAbstractMonster);
 
         if (result) {
-            board.clearDeadMonster(attackedAbstractMonster);
+            if (attackedAbstractMonster.isDead()) {
+                board.clear(attackedAbstractMonster.getLocation());
+            }
             return true;
         }
         return false;
     }
 
+    /**
+     * This method places the Monsters to their initial locations.
+     *
+     * @param monster  Monster to be placed
+     * @param location initial location of the Monster
+     * @param board    the board at which Monsters are being placed
+     */
+    private void initialPlace(char monster, Point location, Board board) {
+        board.setMonster(monster, location);
+    }
+
+    /**
+     * Prints all Monsters' remaining health points.
+     */
     public void printInfo() {
-        System.out.print(this.getClass().getSimpleName() + "'s Werewolf HP: " + this.getMonsterBy('$').getHealthPoints() + "   ");
-        System.out.println(this.getClass().getSimpleName() + "'s Vampire HP: " + this.getMonsterBy('^').getHealthPoints());
-        System.out.print(this.getClass().getSimpleName() + "'s Dragon HP: " + this.getMonsterBy('#').getHealthPoints() + "   ");
-        System.out.println(this.getClass().getSimpleName() + "'s Demon HP: " + this.getMonsterBy('*').getHealthPoints());
-        System.out.println(this.getClass().getSimpleName() + "'s Warlock HP: " + this.getMonsterBy('@').getHealthPoints() + "\n");
+        System.out.print(this.getClass().getSimpleName() + "'s Werewolf HP: " + Math.max(this.getMonsterBy('$').getHealthPoints(), 0) + "   ");
+        System.out.println(this.getClass().getSimpleName() + "'s Vampire HP: " + Math.max(this.getMonsterBy('^').getHealthPoints(), 0));
+        System.out.print(this.getClass().getSimpleName() + "'s Dragon HP: " + Math.max(this.getMonsterBy('#').getHealthPoints(), 0) + "   ");
+        System.out.println(this.getClass().getSimpleName() + "'s Demon HP: " + Math.max(this.getMonsterBy('*').getHealthPoints(), 0));
+        System.out.println(this.getClass().getSimpleName() + "'s Warlock HP: " + Math.max(this.getMonsterBy('@').getHealthPoints(), 0) + "\n");
     }
 }

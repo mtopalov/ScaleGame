@@ -19,7 +19,7 @@ public class BlackPlayer extends AbstractPlayer implements Black {
     }
 
     @Override
-    public boolean boostAttack(Player player, char attackedMonster, char monster) {
+    public boolean boostAttack(Player player, char monster, char attackedMonster, Board board) {
         if (boostLeft == 0) {
             System.out.println("No more boost left!");
             return false;
@@ -27,13 +27,14 @@ public class BlackPlayer extends AbstractPlayer implements Black {
 
         AbstractMonster myMonster = getMonsterBy(monster);
         AbstractPlayer attackedPlayer = (AbstractPlayer) player;
-        AbstractMonster attackedAbstractMonster = attackedPlayer.getMonsterBy(monster);
+        AbstractMonster attackedAbstractMonster = attackedPlayer.getMonsterBy(attackedMonster);
 
         for (int i = 0; i < BOOST_MULTIPLIER; i++) {
             if (!myMonster.attack(attackedAbstractMonster)) {
                 return false;
             }
             if (attackedAbstractMonster.isDead()) {
+                board.clear(attackedAbstractMonster.getLocation());
                 break;
             }
         }
