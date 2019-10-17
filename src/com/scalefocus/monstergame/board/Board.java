@@ -24,8 +24,9 @@ public class Board {
 
     /**
      * Constructor that initializes the board's size through user input,
-     * based on the rule that the size must be greater than 8,
+     * based on the only rule that the size must be greater than 8,
      * initializes the board itself and fills the board with empty values.
+     * Also validates if the user input is not null, empty or contains non-digit values.
      */
     public Board() {
         int number = 0;
@@ -33,16 +34,19 @@ public class Board {
         do {
             System.out.print("Please select the size of the map (must be 8 or greater): ");
             String nextLine = input.nextLine();
+
             if (nextLine == null || nextLine.equals("")) {
                 continue;
             }
 
+            //checks if the user input contains only digits
             if (nextLine.chars().allMatch(Character::isDigit)) {
                 number = Integer.parseInt(nextLine);
             }
         }
         while (number < 8);
 
+        //initializing the board and filling it
         size = number;
         board = new String[size][size];
 
@@ -57,7 +61,7 @@ public class Board {
 
 
     /**
-     * Method that outputs the board.
+     * Method that prints the board.
      */
     public void printBoard() {
         printBorder();
@@ -79,7 +83,7 @@ public class Board {
     }
 
     /**
-     * tyuka dumpq gore i dolu granici
+     * This method prints top and bottom borders.
      */
     private void printBorder() {
         System.out.print("    ");
@@ -94,13 +98,13 @@ public class Board {
     }
 
     /**
-     * Method that adds a Monster to the given location.
+     * Method that adds Monster's symbol to the given location at the current {@link Board}.
      *
-     * @param monster  Monster to be added to the Board.
-     * @param location Location at which the Monster will be added.
+     * @param symbol  {@link Character} - monster's symbol to be added to the {@link Board}
+     * @param location {@link Point} - location at which the Monster's symbol will be added.
      */
-    public void setMonster(char monster, Point location) {
-        board[location.getX()][location.getY()] = " " + monster + " ";
+    public void setMonster(char symbol, Point location) {
+        board[location.getX()][location.getY()] = " " + symbol + " ";
     }
 
     public void clear(Point location) {
@@ -108,10 +112,10 @@ public class Board {
     }
 
     /**
-     * Method that check if a location is available - it's not outside the board and it's empty.
+     * Method that check if a location is available. If it's not outside of the board and it's empty, method returns true.
      *
-     * @param location location on the board to be checked.
-     * @return true if the location is inside the board and it's empty, otherwise false.
+     * @param location {@link Point} location on the board to be checked.
+     * @return {@link Boolean} - true if the location is not outside of the board and it's empty, otherwise false.
      */
     public boolean isLocationAvailable(Point location) {
         if (location.getX() >= 0 && location.getX() < this.getSize() && location.getY() >= 0 && location.getY() < this.getSize()) {

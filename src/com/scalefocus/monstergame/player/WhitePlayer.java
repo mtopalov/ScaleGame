@@ -1,6 +1,7 @@
 package com.scalefocus.monstergame.player;
 
 import com.scalefocus.monstergame.board.Board;
+import com.scalefocus.monstergame.contract.Monster;
 import com.scalefocus.monstergame.contract.White;
 import com.scalefocus.monstergame.monster.AbstractMonster;
 import com.scalefocus.monstergame.monster.Demon;
@@ -10,6 +11,9 @@ import com.scalefocus.monstergame.monster.Werewolf;
 import com.scalefocus.monstergame.monster.Dragon;
 
 /**
+ * Class that inherits the functionality of {@link AbstractPlayer}
+ * and also implements methods, defined in {@link White} interface.
+ *
  * @author mariyan.topalov
  */
 public class WhitePlayer extends AbstractPlayer implements White {
@@ -20,6 +24,14 @@ public class WhitePlayer extends AbstractPlayer implements White {
         super(boardSize, startLine, board);
     }
 
+    /**
+     * This method checks if the {@link Monster}, given as parameter, is dead
+     * and if true, assigns a new Object of type {@link Monster} to the same reference of the dead monster.
+     *
+     * @param monster {@link Character} - monster to be checked if it can be revived.
+     * @param board {@link Board} - if the operation is successful, the monster will be again added in the board.
+     * @return {@inheritDoc}
+     */
     @Override
     public boolean revive(char monster, Board board) {
 
@@ -40,25 +52,25 @@ public class WhitePlayer extends AbstractPlayer implements White {
                 }
                 case '^': {
                     vampire = new Vampire(abstractMonster.getLocation());
-                    this.place('^', abstractMonster.getLocation(), board);
+                    this.place(vampire.getSymbol(), abstractMonster.getLocation(), board);
                     revivesLeft--;
                     return true;
                 }
                 case '#': {
                     dragon = new Dragon(abstractMonster.getLocation());
-                    this.place('#', abstractMonster.getLocation(), board);
+                    this.place(dragon.getSymbol(), abstractMonster.getLocation(), board);
                     revivesLeft--;
                     return true;
                 }
                 case '*': {
                     demon = new Demon(abstractMonster.getLocation());
-                    this.place('*', abstractMonster.getLocation(), board);
+                    this.place(demon.getSymbol(), abstractMonster.getLocation(), board);
                     revivesLeft--;
                     return true;
                 }
                 case '@': {
                     warlock = new Warlock(abstractMonster.getLocation());
-                    this.place('@', abstractMonster.getLocation(), board);
+                    this.place(warlock.getSymbol(), abstractMonster.getLocation(), board);
                     revivesLeft--;
                     return true;
                 }
