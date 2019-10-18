@@ -1,208 +1,126 @@
 package com.scalefocus.monstergame.board;
 
-import com.scalefocus.monstergame.contract.IPlayer;
-
 import java.util.Arrays;
 import java.util.Scanner;
 
 /**
+ * Class that provides matrix of type String which holds
+ * all Players' monsters' symbols, visualizing them at the location they are.
+ * The size of the matrix is defined with user input.
+ *
  * @author mariyan.topalov
  */
 public class Board {
 
-    private static final Scanner in = new Scanner(System.in);
+    private static final Scanner input = new Scanner(System.in);
 
-    private final int n;
+    private static final String EMPTY_PLACE = "   ";
+
+    private static final String INDENT = " ";
+
+    private final int size;
 
     private final String[][] board;
 
+    /**
+     * Constructor that initializes the board's size through user input,
+     * based on the only rule that the size must be greater than 8,
+     * initializes the board itself and fills the board with empty values.
+     * Also validates if the user input is not null, empty or contains non-digit values.
+     */
     public Board() {
         int number = 0;
 
         do {
-            System.out.print("Please select the size of the map(must be 8 or greater): ");
-            String nextLine = in.nextLine();
+            System.out.print("Please select the size of the map (must be 8 or greater): ");
+            String nextLine = input.nextLine();
+
             if (nextLine == null || nextLine.equals("")) {
                 continue;
             }
 
+            //checks if the user input contains only digits
             if (nextLine.chars().allMatch(Character::isDigit)) {
                 number = Integer.parseInt(nextLine);
             }
-        } while (number < 8);
+        }
+        while (number < 8);
 
-        n = number;
-        board = new String[n][n];
-    }
-
-
-    public void createBoard(IPlayer white, IPlayer black) {
+        //initializing the board and filling it
+        size = number;
+        board = new String[size][size];
 
         for (String[] strings : board) {
-            Arrays.fill(strings, "   ");
+            Arrays.fill(strings, EMPTY_PLACE);
         }
-
-        int initPos = n / 2 - 2;
-
-        board[0][initPos] = " " + white.getMonsterBy('$').getMonsterSymbol() + " ";
-        white.getMonsterBy('$').setNewLocation(new Point(0, initPos));
-        white.getMonsterBy('$').setCurrentLocation(new Point(0, initPos));
-        white.getMonsterBy('$').setInitialLocation(new Point(0, initPos));
-
-        board[0][initPos + 1] = " " + white.getMonsterBy('^').getMonsterSymbol() + " ";
-        white.getMonsterBy('^').setNewLocation(new Point(0, initPos + 1));
-        white.getMonsterBy('^').setCurrentLocation(new Point(0, initPos + 1));
-        white.getMonsterBy('^').setInitialLocation(new Point(0, initPos + 1));
-
-        board[0][initPos + 2] = " " + white.getMonsterBy('#').getMonsterSymbol() + " ";
-        white.getMonsterBy('#').setNewLocation(new Point(0, initPos + 2));
-        white.getMonsterBy('#').setCurrentLocation(new Point(0, initPos + 2));
-        white.getMonsterBy('#').setInitialLocation(new Point(0, initPos + 2));
-
-        board[0][initPos + 3] = " " + white.getMonsterBy('*').getMonsterSymbol() + " ";
-        white.getMonsterBy('*').setNewLocation(new Point(0, initPos + 3));
-        white.getMonsterBy('*').setCurrentLocation(new Point(0, initPos + 3));
-        white.getMonsterBy('*').setInitialLocation(new Point(0, initPos + 3));
-
-        board[0][initPos + 4] = " " + white.getMonsterBy('@').getMonsterSymbol() + " ";
-        white.getMonsterBy('@').setNewLocation(new Point(0, initPos + 4));
-        white.getMonsterBy('@').setCurrentLocation(new Point(0, initPos + 4));
-        white.getMonsterBy('@').setInitialLocation(new Point(0, initPos + 4));
-
-        board[n - 1][initPos] = " " + black.getMonsterBy('$').getMonsterSymbol() + " ";
-        black.getMonsterBy('$').setNewLocation(new Point(n - 1, initPos));
-        black.getMonsterBy('$').setCurrentLocation(new Point(n - 1, initPos));
-
-        board[n - 1][initPos + 1] = " " + black.getMonsterBy('^').getMonsterSymbol() + " ";
-        black.getMonsterBy('^').setNewLocation(new Point(n - 1, initPos + 1));
-        black.getMonsterBy('^').setCurrentLocation(new Point(n - 1, initPos + 1));
-
-        board[n - 1][initPos + 2] = " " + black.getMonsterBy('#').getMonsterSymbol() + " ";
-        black.getMonsterBy('#').setNewLocation(new Point(n - 1, initPos + 2));
-        black.getMonsterBy('#').setCurrentLocation(new Point(n - 1, initPos + 2));
-
-        board[n - 1][initPos + 3] = " " + black.getMonsterBy('*').getMonsterSymbol() + " ";
-        black.getMonsterBy('*').setNewLocation(new Point(n - 1, initPos + 3));
-        black.getMonsterBy('*').setCurrentLocation(new Point(n - 1, initPos + 3));
-
-        board[n - 1][initPos + 4] = " " + black.getMonsterBy('@').getMonsterSymbol() + " ";
-        black.getMonsterBy('@').setNewLocation(new Point(n - 1, initPos + 4));
-        black.getMonsterBy('@').setCurrentLocation(new Point(n - 1, initPos + 4));
-
-        printBoard(white, black);
-
     }
 
-    public void printBoard(IPlayer white, IPlayer black) {
-        refreshBoard(white, black);
+    public int getSize() {
+        return size;
+    }
 
-        System.out.print("    ");
-        for (int i = 0; i < n; i++)
-            if (i >= 10) System.out.print(" " + i);
-            else System.out.print(" " + i + " ");
-        System.out.println();
+
+    /**
+     * Method that prints the board.
+     */
+    public void printBoard() {
+        printBorder();
 
         for (int x = 0; x < board.length; x++) {
-            if (x >= 10) System.out.print(" " + x + "|");
-            else System.out.print("  " + x + "|");
+            if (x >= 10) {
+                System.out.print(INDENT + x + "|");
+            } else {
+                System.out.print(INDENT + INDENT + x + "|");
+            }
 
             for (int y = 0; y < board[x].length; y++) {
                 System.out.print(board[x][y]);
             }
-
-            if (x == 0)
-                System.out.println("|" + x + "   White " + white.getMonsterBy('$').getClass().getSimpleName() + " HP: " + white.getMonsterBy('$').getCurrentHealthPoints() + "   White " + white.getMonsterBy('^').getClass().getSimpleName() + " HP: " + white.getMonsterBy('^').getCurrentHealthPoints());
-            else if (x == 1)
-                System.out.println("|" + x + "   White " + white.getMonsterBy('#').getClass().getSimpleName() + " HP: " + white.getMonsterBy('#').getCurrentHealthPoints() + "   White " + white.getMonsterBy('*').getClass().getSimpleName() + " HP: " + white.getMonsterBy('*').getCurrentHealthPoints());
-            else if (x == 2)
-                System.out.println("|" + x + "   White " + white.getMonsterBy('@').getClass().getSimpleName() + " HP: " + white.getMonsterBy('@').getCurrentHealthPoints());
-            else if (x == 5)
-                System.out.println("|" + x + "   Black " + black.getMonsterBy('$').getClass().getSimpleName() + " HP: " + black.getMonsterBy('$').getCurrentHealthPoints() + "   Black " + black.getMonsterBy('^').getClass().getSimpleName() + " HP: " + black.getMonsterBy('^').getCurrentHealthPoints());
-            else if (x == 6) {
-                System.out.println("|" + x + "   Black " + black.getMonsterBy('#').getClass().getSimpleName() + " HP: " + black.getMonsterBy('#').getCurrentHealthPoints() + "   Black " + black.getMonsterBy('*').getClass().getSimpleName() + " HP: " + black.getMonsterBy('*').getCurrentHealthPoints());
-            } else if (x == 7) {
-                System.out.println("|" + x + "   Black " + black.getMonsterBy('@').getClass().getSimpleName() + " HP: " + black.getMonsterBy('@').getCurrentHealthPoints());
-            } else
-                System.out.println("|" + x);
+            System.out.println("|" + x);
         }
 
-        System.out.print("    ");
-        for (int i = 0; i < n; i++)
-            if (i >= 10) System.out.print(" " + i);
-            else System.out.print(" " + i + " ");
-        System.out.println();
-
-    }
-
-    private void removeIfDead(IPlayer player, char monster) {
-        if (player.getMonsterBy(monster).isRemoved()) {
-            return;
-        }
-
-        if (player.getMonsterBy(monster).isDead()) {
-            System.out.println(player.getClass().getSimpleName() + "'s " + player.getMonsterBy(monster).getClass().getSimpleName() + " is dead");
-
-            Point deadMonsterLocation = new Point(player.getMonsterBy(monster).getNewLocation().getX(), player.getMonsterBy(monster).getNewLocation().getY());
-
-            board[deadMonsterLocation.getX()][deadMonsterLocation.getY()] = "   ";
-
-            player.getMonsterBy(monster).setNewLocation(null);
-            player.getMonsterBy(monster).setRemoved(true);
-        }
-    }
-
-    private void printIfAlive(IPlayer player, char monster) {
-        if (player.getMonsterBy(monster).isDead()) {
-            return;
-        }
-        if (isLocationAvailable(player.getMonsterBy(monster).getNewLocation())) {
-            board[player.getMonsterBy(monster).getNewLocation().getX()][player.getMonsterBy(monster).getNewLocation().getY()] = " " + player.getMonsterBy(monster).getMonsterSymbol() + " ";
-            if (player.getMonsterBy(monster).getCurrentLocation() != null) {
-                board[player.getMonsterBy(monster).getCurrentLocation().getX()][player.getMonsterBy(monster).getCurrentLocation().getY()] = "   ";
-            }
-        }
+        printBorder();
     }
 
     /**
-     * Checks if a location is available and it's not outside of the board.
+     * This method prints top and bottom borders.
+     */
+    private void printBorder() {
+        System.out.print("    ");
+        for (int i = 0; i < size; i++) {
+            if (i >= 10) {
+                System.out.print(INDENT + i);
+            } else {
+                System.out.print(INDENT + i + INDENT);
+            }
+        }
+        System.out.println();
+    }
+
+    /**
+     * Method that adds Monster's symbol to the given location at the current {@link Board}.
      *
-     * @param location location to be checked
-     * @return true if available, false if not
+     * @param symbol  {@link Character} - monster's symbol to be added to the {@link Board}
+     * @param location {@link Point} - location at which the Monster's symbol will be added.
+     */
+    public void setMonster(char symbol, Point location) {
+        board[location.getX()][location.getY()] = " " + symbol + " ";
+    }
+
+    public void clear(Point location) {
+        board[location.getX()][location.getY()] = EMPTY_PLACE;
+    }
+
+    /**
+     * Method that check if a location is available. If it's not outside of the board and it's empty, method returns true.
+     *
+     * @param location {@link Point} location on the board to be checked.
+     * @return {@link Boolean} - true if the location is not outside of the board and it's empty, otherwise false.
      */
     public boolean isLocationAvailable(Point location) {
-        if (location.getX() >= 0 && location.getX() < n && location.getY() >= 0 && location.getY() < n) {
-            return board[location.getX()][location.getY()].equals("   ");
+        if (location.getX() >= 0 && location.getX() < this.getSize() && location.getY() >= 0 && location.getY() < this.getSize()) {
+            return this.board[location.getX()][location.getY()].equals(EMPTY_PLACE);
         }
         return false;
     }
-
-    private void refreshBoard(IPlayer white, IPlayer black) {
-
-        removeIfDead(white, '$');
-        removeIfDead(white, '^');
-        removeIfDead(white, '#');
-        removeIfDead(white, '*');
-        removeIfDead(white, '@');
-
-        printIfAlive(white, '$');
-        printIfAlive(white, '^');
-        printIfAlive(white, '#');
-        printIfAlive(white, '*');
-        printIfAlive(white, '@');
-
-        removeIfDead(black, '$');
-        removeIfDead(black, '^');
-        removeIfDead(black, '#');
-        removeIfDead(black, '*');
-        removeIfDead(black, '@');
-
-        printIfAlive(black, '$');
-        printIfAlive(black, '^');
-        printIfAlive(black, '#');
-        printIfAlive(black, '*');
-        printIfAlive(black, '@');
-
-
-    }
-
 }
